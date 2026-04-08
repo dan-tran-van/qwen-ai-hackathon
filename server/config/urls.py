@@ -10,6 +10,8 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from server.auth.api.google_login_view import GoogleLogin
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -45,6 +47,7 @@ urlpatterns += [
     ),
     # dj-rest-auth urls
     path("api/auth/", include("dj_rest_auth.urls")),
+    path("api/auth/google/", GoogleLogin.as_view(), name="google_login"),
 ]
 
 if settings.DEBUG:

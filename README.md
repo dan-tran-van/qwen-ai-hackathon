@@ -57,7 +57,21 @@ From the repository root:
 
    Then copy `server/.envs/.local/.django.example` to `server/.envs/.local/.django` and set `DASHSCOPE_API_KEY` in the new file.
 
-3. Build and start containers.
+#### Google OAuth Setup (Backend)
+
+Before running the backend with Google login enabled:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project or select an existing project.
+3. Navigate to **APIs & Services -> Credentials**.
+4. Click **Create Credentials -> OAuth 2.0 Client IDs**.
+5. Configure the consent screen if prompted.
+6. Select **Web application**.
+7. Add authorized redirect URIs.
+8. Development redirect URI: `http://localhost:3000/auth/google/callback`
+9. Save your Client ID and Client Secret to `server/.envs/.local/.django` after copying it from `server/.envs/.local/.django.example`.
+
+10. Build and start containers.
 
 Commands:
 

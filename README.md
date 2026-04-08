@@ -10,6 +10,18 @@ This repository contains two applications:
 - client: Frontend app (Next.js)
 - server: Backend app (Django + PostgreSQL via Docker Compose)
 
+## Client Stack
+
+The client uses a small set of UI and data-fetching libraries built around shadcn/ui:
+
+- [shadcn/ui](https://ui.shadcn.com) for accessible, copyable UI components.
+- [Recharts](https://recharts.org) for charting and data visualization components.
+- [openapi-typescript](https://github.com/openapi-ts/openapi-typescript) to generate typed API definitions from the backend OpenAPI schema.
+- [TanStack Query](https://tanstack.com/query/latest) for server-state management and request caching.
+- [React Hook Form](https://react-hook-form.com) for form state and validation.
+
+The client also uses `openapi-fetch` and `openapi-react-query` to connect the generated OpenAPI types to typed API calls and query helpers.
+
 ## Prerequisites
 
 Install the following tools:
@@ -39,7 +51,13 @@ Run the Django server with Docker and the Next.js client with Bun.
 From the repository root:
 
 1. Change into the server directory.
-2. Build and start containers.
+2. Copy the local Django env example file and add your Qwen API key.
+
+   The backend uses the Alibaba Cloud Qwen API via the OpenAI-compatible Chat Completions interface. Follow the provider instructions at https://www.alibabacloud.com/help/en/model-studio/qwen-api-via-openai-chat-completions to obtain your key.
+
+   Then copy `server/.envs/.local/.django.example` to `server/.envs/.local/.django` and set `DASHSCOPE_API_KEY` in the new file.
+
+3. Build and start containers.
 
 Commands:
 
@@ -90,7 +108,9 @@ The local Docker setup reads environment files from:
 - server/.envs/.local/.django
 - server/.envs/.local/.postgres
 
-These files are already present in this repository. For your own deployment or shared environments, replace secrets and credentials with your own values.
+The `.django` file is intentionally untracked, so create it by copying `server/.envs/.local/.django.example` to `server/.envs/.local/.django` before starting the backend. Add your Qwen API key there as `DASHSCOPE_API_KEY`.
+
+For your own deployment or shared environments, replace secrets and credentials with your own values.
 
 If you prefer just commands:
 
@@ -117,6 +137,19 @@ Typical commands:
     bun dev
     bun run lint
     bun run build
+    bun run schema:generate
+
+The schema generation command keeps `client/lib/api/v1.d.ts` in sync with `server/schema.yml`.
+
+## Collaboration Workflow
+
+When working on a new client or full-stack feature:
+
+1. Create a new branch before starting the feature work.
+2. Pull the latest `main` branch frequently to avoid drift.
+3. After pulling `main`, stop the local containers and rebuild the backend image before restarting the stack. Use `docker compose -f docker-compose.local.yml down` or `just down`, then `docker compose -f docker-compose.local.yml up -d --build` or `just build` followed by `just up`.
+4. After pulling `main` or whenever the backend schema changes, re-run `bun run schema:generate` in `client/`.
+5. Run the relevant checks before opening a pull request, typically `bun run lint` and `bun run build` in the client.
 
 ## Common Development Commands
 

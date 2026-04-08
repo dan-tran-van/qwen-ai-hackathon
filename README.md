@@ -59,6 +59,18 @@ Server URLs:
 - App: http://localhost:8000
 - Admin: http://localhost:8000/admin
 
+### Access Swagger UI Docs
+
+Swagger UI is restricted to admin users in this project.
+
+1. Create a superuser:
+
+   cd server
+   docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
+
+2. Login to the Django admin site at http://localhost:8000/admin.
+3. Open the Swagger UI endpoint: http://localhost:8000/api/docs/.
+
 ### 2) Start the client
 
 Open a second terminal, then:

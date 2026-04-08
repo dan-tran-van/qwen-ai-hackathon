@@ -43,6 +43,8 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    # dj-rest-auth urls
+    path("api/auth/", include("dj_rest_auth.urls")),
 ]
 
 if settings.DEBUG:

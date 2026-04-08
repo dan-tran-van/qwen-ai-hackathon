@@ -142,7 +142,7 @@ Useful shortcuts:
 
 ## Client Local Environment Details
 
-The client currently does not require a committed environment file to run locally.
+For Google OAuth, create a local client env file by copying `client/.env.example` to `client/.env`, then set the required Google OAuth environment variable values in `client/.env`.
 
 Typical commands:
 

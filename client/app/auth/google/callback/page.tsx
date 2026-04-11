@@ -1,6 +1,7 @@
 "use client";
 import { $api } from "@/lib/api/api";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function GoogleCallbackPage() {
   const searchParams = useSearchParams();
@@ -11,20 +12,13 @@ export default function GoogleCallbackPage() {
     { body: { code: code || "" } },
   );
 
+  useEffect(() => {
+    if (data) {
+      redirect("/dashboard");
+    }
+  }, [data]);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.detail}</div>;
-  console.log("Google callback data:", data);
-
-  return (
-    <div>
-      {data ? (
-        <div>
-          <h1>Login successful!</h1>
-          <p>Welcome, {data.access}!</p>
-        </div>
-      ) : (
-        <div>Logging in...</div>
-      )}
-    </div>
-  );
+  return <div>Redirecting...</div>;
 }

@@ -3,6 +3,14 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import ReactQueryProvider from "@/providers/react-query-provider";
+import AuthProvider from "@/providers/auth-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "./components/app-sidebar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -38,8 +46,17 @@ export default function RootLayout({
         inter.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+      <body className="h-screen w-screen">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <TooltipProvider>
+              <ReactQueryProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </ReactQueryProvider>
+            </TooltipProvider>
+          </SidebarInset>
+        </SidebarProvider>
       </body>
     </html>
   );

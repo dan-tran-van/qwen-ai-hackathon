@@ -1,11 +1,47 @@
 "use client";
 
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { $api } from "@/lib/api/api";
+import { useAuth } from "@/providers/auth-provider";
+import { useEffect } from "react";
 
 export default function Home() {
+  const { user } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      window.location.href = "/login";
+    }
+  }, [user]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start"></main>
-    </div>
+    <>
+      <header className="flex h-12 shrink-0 items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        {/* <Separator
+          orientation="vertical"
+          className="mr-2 data-[orientation=vertical]:h-4"
+        /> */}
+        {/* <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb> */}
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+        </div>
+        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
+      </div>
+    </>
   );
 }

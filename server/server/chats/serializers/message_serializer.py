@@ -3,7 +3,7 @@ from rest_framework import serializers
 from server.chats.models.message_model import Message
 
 
-class MessageSerialzier(serializers.ModelSerializer[Message]):
+class MessageSerializer(serializers.ModelSerializer[Message]):
     class Meta:
         model = Message
         fields = [

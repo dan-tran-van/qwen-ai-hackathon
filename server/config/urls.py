@@ -48,6 +48,7 @@ urlpatterns += [
     # dj-rest-auth urls
     path("api/auth/", include("dj_rest_auth.urls")),
     path("api/auth/google/", GoogleLogin.as_view(), name="google_login"),
+    path("api/chats/", include("server.chats.urls"), name="chats-api"),
 ]
 
 if settings.DEBUG:

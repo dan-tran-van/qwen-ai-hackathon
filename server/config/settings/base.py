@@ -286,7 +286,7 @@ ACCOUNT_LOGIN_METHODS = {"username"}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_ADAPTER = "server.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
@@ -302,6 +302,8 @@ SOCIALACCOUNT_FORMS = {"signup": "server.users.forms.UserSocialSignupForm"}
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

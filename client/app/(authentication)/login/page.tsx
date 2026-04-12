@@ -12,9 +12,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import GoogleLoginButton from "../components/google-login-button";
+import GoogleLoginButton from "../../components/google-login-button";
+import { useAuth } from "@/providers/auth-provider";
+import { useEffect } from "react";
 
-export default function Login() {
+export default function LoginPage() {
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user) {
+      window.location.href = "/";
+    }
+  }, [user]);
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex w-full h-full justify-center items-center">

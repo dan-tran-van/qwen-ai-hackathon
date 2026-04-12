@@ -3,12 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import ReactQueryProvider from "@/providers/react-query-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "./components/app-sidebar";
 import AuthProvider from "@/providers/auth-provider";
-import { ActiveTabProvider, useActiveTab } from "@/providers/sidebar-provider";
-import { SidebarContentHeader } from "./components/sidebar-content-header";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -45,21 +40,9 @@ export default function RootLayout({
       )}
     >
       <body className="h-screen w-screen">
-        <ActiveTabProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <SidebarContentHeader />
-              <div className="flex-1 overflow-auto p-4">
-                <TooltipProvider>
-                  <ReactQueryProvider>
-                    <AuthProvider>{children}</AuthProvider>
-                  </ReactQueryProvider>
-                </TooltipProvider>
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-        </ActiveTabProvider>
+        <ReactQueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

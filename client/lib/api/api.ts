@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/";
 
-const fetchClient = createFetchClient<paths>({
+export const fetchClient = createFetchClient<paths>({
   baseUrl: API_BASE_URL,
   credentials: "include", // Include cookies in requests
 });

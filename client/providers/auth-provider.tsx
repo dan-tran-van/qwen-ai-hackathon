@@ -1,8 +1,8 @@
 "use client";
-import { $api } from "@/lib/api/api";
+import { $api, fetchClient } from "@/lib/api/api";
 import { components } from "@/lib/api/v1";
-import Cookies from "js-cookie";
-import { createContext, useContext } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { createContext, useContext, useState } from "react";
 
 type UserDetails = components["schemas"]["UserDetails"];
 
@@ -21,15 +21,20 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = $api.useQuery("get", "/api/auth/user/");
-  const logout = () => {
-    Cookies.remove("access", { secure: true });
-    Cookies.remove("refresh", { secure: true });
-    window.location.href = "/";
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const logout = async () => {
+    setIsLoggingOut(true);
+    await fetchClient.POST("/api/auth/logout/");
+
+    queryClient.clear();
+    setIsLoggingOut(false);
   };
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   return (
     <AuthContext.Provider
       value={{

@@ -27,9 +27,11 @@ export default function AuthProvider({
     Cookies.remove("refresh", { secure: true });
     window.location.href = "/";
   };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   return (
     <AuthContext.Provider
       value={{

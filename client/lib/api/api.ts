@@ -11,6 +11,7 @@ const fetchClient = createFetchClient<paths>({
   baseUrl: API_BASE_URL,
   credentials: "include", // Include cookies in requests
 });
+
 const AUTH_EXCLUDED_PATHS = new Set([
   "/api/accounts/token/refresh/",
   "/api/accounts/login/",
@@ -36,6 +37,7 @@ async function refreshToken() {
     return null;
   }
 }
+
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
     const accessToken = Cookies.get("access");

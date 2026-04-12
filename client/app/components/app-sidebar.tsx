@@ -5,6 +5,8 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { SIDEBAR_ITEMS } from "./constants";
+import { SideMain } from "./side-main";
 import { useAuth } from "@/providers/auth-provider";
 
 export function AppSidebar() {
@@ -12,8 +14,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader />
-      <SidebarContent></SidebarContent>
+      <SidebarHeader></SidebarHeader>
+      <SidebarContent>
+        <SideMain items={SIDEBAR_ITEMS} />
+      </SidebarContent>
       <SidebarFooter>
         {user && (
           <div className="flex flex-col items-start gap-2">

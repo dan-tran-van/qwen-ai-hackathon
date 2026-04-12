@@ -31,6 +31,7 @@ export default function AuthProvider({
     queryClient.clear();
     setIsLoggingOut(false);
   };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

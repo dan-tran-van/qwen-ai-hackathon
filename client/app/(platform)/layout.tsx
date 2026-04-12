@@ -1,6 +1,6 @@
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "../components/app-sidebar";
+import { SidebarContentHeader } from "../components/sidebar-content-header";
 
 export default function PlatformLayout({
   children,
@@ -12,7 +12,8 @@ export default function PlatformLayout({
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <TooltipProvider>{children}</TooltipProvider>
+          <SidebarContentHeader />
+          {children}
         </SidebarInset>
       </SidebarProvider>
     </>

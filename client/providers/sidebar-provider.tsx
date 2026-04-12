@@ -18,7 +18,6 @@ export function ActiveTabProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const activeKey = pathname.split("/")[1] || "";
 
-  // tìm item tương ứng
   const activeItem = SIDEBAR_ITEMS.find((item) => item.href === activeKey);
 
   const activeTab = activeItem?.label || "";

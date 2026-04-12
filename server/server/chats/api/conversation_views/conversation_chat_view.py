@@ -27,10 +27,9 @@ class ConversationChatView(generics.GenericAPIView):
         conversation = Conversation.objects.get(id=conversation_id, user=request.user)
         data = {
             "content": request.data.get("content"),
-            "conversation": conversation_id,
         }
         serializer = MessageChatSerializer(
-            context={"request": request},
+            context={"request": request, "conversation": conversation},
             data=data,
         )
         serializer.is_valid(raise_exception=True)

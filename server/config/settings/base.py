@@ -344,6 +344,7 @@ REST_AUTH = {
     "JWT_AUTH_SECURE": False,  # True in production!
     "JWT_AUTH_SAMESITE": "Lax",
     "JWT_AUTH_RETURN_EXPIRATION": True,
+    "JWT_AUTH_COOKIE_USE_CSRF": True,
 }
 
 # simplejwt - https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
@@ -373,3 +374,5 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     },
 }
+
+CSRF_COOKIE_HTTPONLY = False

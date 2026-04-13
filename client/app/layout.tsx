@@ -39,7 +39,7 @@ export default function RootLayout({
         inter.variable,
       )}
     >
-      <body className="h-screen w-screen">
+      <body className="h-screen w-screen overflow-hidden">
         <ReactQueryProvider>
           <AuthProvider>{children}</AuthProvider>
         </ReactQueryProvider>

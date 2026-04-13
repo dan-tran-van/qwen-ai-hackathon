@@ -51,7 +51,7 @@ export function AppSidebar() {
                 className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
                 title="Cuộc trò chuyện mới"
               >
-                <PlusIcon className="h-3.5 w-3.5" />
+                <PlusIcon className="h-3.5 w-3.5 cursor-pointer" />
               </button>
             </div>
 

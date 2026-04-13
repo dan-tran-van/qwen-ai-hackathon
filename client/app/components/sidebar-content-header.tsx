@@ -14,6 +14,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { usePathname } from "next/navigation";
 import { LuBell, LuUser } from "react-icons/lu";
 import { SIDEBAR_ITEMS } from "./constants";
+import Link from "next/link";
 
 export function SidebarContentHeader() {
   const { user, logout } = useAuth();
@@ -27,7 +28,7 @@ export function SidebarContentHeader() {
   return (
     <header className="h-14 flex items-center justify-between border-b border-border/60 px-4 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="-ml-1" />
+        <SidebarTrigger className="-ml-1 cursor-pointer" />
         <h6 className="text-md font-semibold text-foreground">{tabLabel}</h6>
       </div>
       <div className="flex items-center gap-2">
@@ -40,17 +41,22 @@ export function SidebarContentHeader() {
               <LuUser size={24} className="h-4 w-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="rounded-sm">
             <DropdownMenuGroup>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href={"/profile"}>Profile</Link>
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>Theme</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href={"/settings"}>Settings</Link>
+              </DropdownMenuItem>
               {user && (
-                <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                  Logout
+                </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
           </DropdownMenuContent>

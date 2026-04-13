@@ -25,7 +25,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -74,7 +73,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       - {}
       responses:
         '200':
@@ -112,7 +110,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       - {}
       responses:
         '200':
@@ -135,7 +132,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       - {}
       responses:
         '200':
@@ -170,7 +166,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -204,7 +199,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       - {}
       responses:
         '200':
@@ -241,7 +235,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       - {}
       responses:
         '200':
@@ -322,7 +315,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -359,7 +351,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -395,13 +386,160 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetails'
+          description: ''
+  /api/chats/conversations/:
+    get:
+      operationId: chats_conversations_list
+      description: API view to list all conversations for the authenticated user.
+      tags:
+      - chats
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+          description: ''
+  /api/chats/conversations/{conversation_id}/chat:
+    post:
+      operationId: chats_conversations_chat_create
+      description: API view to handle chat interactions within a conversation.
+      parameters:
+      - in: path
+        name: conversation_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageChat'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageChat'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageChat'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/chats/conversations/{id}/:
+    get:
+      operationId: chats_conversations_retrieve
+      description: API view to retrieve details of a specific conversation, including
+        its messages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chats
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetailResponse'
+          description: ''
+  /api/chats/conversations/create/:
+    post:
+      operationId: chats_conversations_create_create
+      description: API view to create a new conversation for the authenticated user.
+      tags:
+      - chats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ConversationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ConversationCreate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationCreate'
+          description: ''
+  /api/chats/conversations/last-7-days/:
+    get:
+      operationId: chats_conversations_last_7_days_list
+      description: API view to list conversations from the last 7 days for the authenticated
+        user.
+      tags:
+      - chats
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+          description: ''
+  /api/chats/conversations/today/:
+    get:
+      operationId: chats_conversations_today_list
+      description: API view to list conversations from today for the authenticated
+        user.
+      tags:
+      - chats
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
           description: ''
   /api/schema/:
     get:
@@ -530,7 +668,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -560,7 +697,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -587,7 +723,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -623,7 +758,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -658,7 +792,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -675,7 +808,6 @@ paths:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       - cookieAuth: []
-      - tokenAuth: []
       responses:
         '200':
           content:
@@ -701,6 +833,64 @@ components:
       - password
       - token
       - username
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        system_prompt:
+          type: string
+        last_message_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - id
+      - last_message_at
+      - user
+    ConversationCreate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - updated_at
+    ConversationDetailResponse:
+      type: object
+      properties:
+        conversation:
+          $ref: '#/components/schemas/Conversation'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+      - conversation
+      - messages
     JWT:
       type: object
       description: Serializer for JWT authentication.
@@ -727,6 +917,45 @@ components:
           type: string
       required:
       - password
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        conversation:
+          type: string
+          format: uuid
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        content:
+          type: string
+        order:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+        error_message:
+          type: string
+          readOnly: true
+      required:
+      - content
+      - conversation
+      - error_message
+      - id
+      - order
+      - role
+      - status
+    MessageChat:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+      - content
     PasswordChange:
       type: object
       properties:
@@ -817,6 +1046,16 @@ components:
           readOnly: true
       required:
       - detail
+    RoleEnum:
+      enum:
+      - system
+      - user
+      - assistant
+      type: string
+      description: |-
+        * `system` - System
+        * `user` - User
+        * `assistant` - Assistant
     SocialLogin:
       type: object
       properties:
@@ -826,6 +1065,16 @@ components:
           type: string
         id_token:
           type: string
+    StatusEnum:
+      enum:
+      - pending
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `failed` - Failed
     TokenRefresh:
       type: object
       properties:
@@ -909,8 +1158,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    tokenAuth:
-      type: apiKey
-      in: header
-      name: Authorization
-      description: Token-based authentication with required prefix "Token"

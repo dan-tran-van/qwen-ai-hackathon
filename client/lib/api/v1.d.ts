@@ -259,6 +259,108 @@ export interface paths {
         patch: operations["auth_user_partial_update"];
         trace?: never;
     };
+    "/api/chats/conversations/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description API view to list all conversations for the authenticated user. */
+        get: operations["chats_conversations_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/{conversation_id}/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description API view to handle chat interactions within a conversation. */
+        post: operations["chats_conversations_chat_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description API view to retrieve details of a specific conversation, including its messages. */
+        get: operations["chats_conversations_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/create/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description API view to create a new conversation for the authenticated user. */
+        post: operations["chats_conversations_create_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/last-7-days/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description API view to list conversations from the last 7 days for the authenticated user. */
+        get: operations["chats_conversations_last_7_days_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/today/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description API view to list conversations from today for the authenticated user. */
+        get: operations["chats_conversations_today_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/schema/": {
         parameters: {
             query?: never;
@@ -338,6 +440,28 @@ export interface components {
             password: string;
             readonly token: string;
         };
+        Conversation: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly user: number;
+            title?: string;
+            system_prompt?: string;
+            /** Format: date-time */
+            readonly last_message_at: string | null;
+        };
+        ConversationCreate: {
+            /** Format: uuid */
+            readonly id: string;
+            title?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        ConversationDetailResponse: {
+            conversation: components["schemas"]["Conversation"];
+            messages: components["schemas"]["Message"][];
+        };
         /** @description Serializer for JWT authentication. */
         JWT: {
             access: string;
@@ -349,6 +473,19 @@ export interface components {
             /** Format: email */
             email?: string;
             password: string;
+        };
+        Message: {
+            readonly id: number;
+            /** Format: uuid */
+            readonly conversation: string;
+            role: components["schemas"]["RoleEnum"];
+            content: string;
+            readonly order: number;
+            readonly status: components["schemas"]["StatusEnum"];
+            readonly error_message: string;
+        };
+        MessageChat: {
+            content: string;
         };
         PasswordChange: {
             new_password1: string;
@@ -391,11 +528,25 @@ export interface components {
         RestAuthDetail: {
             readonly detail: string;
         };
+        /**
+         * @description * `system` - System
+         *     * `user` - User
+         *     * `assistant` - Assistant
+         * @enum {string}
+         */
+        RoleEnum: "system" | "user" | "assistant";
         SocialLogin: {
             access_token?: string;
             code?: string;
             id_token?: string;
         };
+        /**
+         * @description * `pending` - Pending
+         *     * `completed` - Completed
+         *     * `failed` - Failed
+         * @enum {string}
+         */
+        StatusEnum: "pending" | "completed" | "failed";
         TokenRefresh: {
             readonly access: string;
             refresh: string;
@@ -718,6 +869,136 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserDetails"];
+                };
+            };
+        };
+    };
+    chats_conversations_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conversation"][];
+                };
+            };
+        };
+    };
+    chats_conversations_chat_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageChat"];
+                "application/x-www-form-urlencoded": components["schemas"]["MessageChat"];
+                "multipart/form-data": components["schemas"]["MessageChat"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+        };
+    };
+    chats_conversations_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationDetailResponse"];
+                };
+            };
+        };
+    };
+    chats_conversations_create_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ConversationCreate"];
+                "application/x-www-form-urlencoded": components["schemas"]["ConversationCreate"];
+                "multipart/form-data": components["schemas"]["ConversationCreate"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationCreate"];
+                };
+            };
+        };
+    };
+    chats_conversations_last_7_days_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conversation"][];
+                };
+            };
+        };
+    };
+    chats_conversations_today_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conversation"][];
                 };
             };
         };

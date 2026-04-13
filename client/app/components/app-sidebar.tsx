@@ -3,20 +3,60 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { SIDEBAR_ITEMS } from "./constants";
 import { SideMain } from "./side-main";
 import { useAuth } from "@/providers/auth-provider";
 import Image from "next/image";
-import { PlusIcon } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  Bot,
+  Inbox,
+  LayoutDashboard,
+  PlusIcon,
+  Search,
+  Shield,
+} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Link from "next/link";
+import { clsx } from "clsx";
+import { $api } from "@/lib/api/api";
+import { ChatGroup } from "./chat-group";
+
+const navItems = [
+  { title: "Tổng quan", url: "/overview", icon: LayoutDashboard },
+  { title: "Hồ sơ đến", url: "/incoming-records", icon: Inbox },
+  { title: "Thư viện", url: "/library", icon: BookOpen },
+  { title: "Trợ lý AI", url: "/ai-assistant", icon: Bot },
+  { title: "Tra cứu", url: "/smart-search", icon: Search },
+  { title: "Phân tích", url: "/analytics", icon: BarChart3 },
+  { title: "Bảo mật & nhật ký", url: "/security", icon: Shield },
+];
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const isActive = (url: string) => {
+    if (url === "/") return location.pathname === "/";
+    return location.pathname.startsWith(url);
+  };
+  const { data, isLoading, error } = $api.useQuery(
+    "get",
+    "/api/chats/conversations/today/",
+  );
+  const {
+    data: last7DaysConversations,
+    isLoading: is7DaysConversationLoading,
+  } = $api.useQuery("get", "/api/chats/conversations/last-7-days/");
 
   return (
     <Sidebar collapsible="icon">
@@ -38,7 +78,40 @@ export function AppSidebar() {
             )}
           </div>
         </div>
-        <SideMain items={SIDEBAR_ITEMS} />
+        {/* <SideMain items={SIDEBAR_ITEMS} /> */}
+        {/* Main nav */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                  >
+                    <Link
+                      href={item.url}
+                      // end={item.url === "/"}
+                      className={clsx(
+                        "gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        {
+                          "bg-sidebar-accent text-sidebar-accent-foreground":
+                            isActive(item.url),
+                        },
+                      )}
+                      // activeClassName="bg-sidebar-accent text-sidebar-accent-foreground"
+                    >
+                      <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Chat conversations */}
         {!collapsed && (
           <div className="flex-1 flex flex-col min-h-0 mt-2">
@@ -57,30 +130,31 @@ export function AppSidebar() {
 
             <ScrollArea className="flex-1 px-2">
               <div className="space-y-3 pb-4">
-                {/* {grouped.today.length > 0 && (
+                {data && data.length > 0 && (
                   <ChatGroup
                     label="Hôm nay"
-                    chats={grouped.today}
-                    navigate={navigate}
+                    chats={data}
+                    navigate={(path) => (location.href = path)}
                     currentPath={location.pathname}
                   />
                 )}
-                {grouped.last7Days.length > 0 && (
-                  <ChatGroup
-                    label="7 ngày qua"
-                    chats={grouped.last7Days}
-                    navigate={navigate}
-                    currentPath={location.pathname}
-                  />
-                )}
-                {grouped.older.length > 0 && (
+                {last7DaysConversations &&
+                  last7DaysConversations.length > 0 && (
+                    <ChatGroup
+                      label="7 ngày qua"
+                      chats={last7DaysConversations}
+                      navigate={(path) => (location.href = path)}
+                      currentPath={location.pathname}
+                    />
+                  )}
+                {/* {grouped.older.length > 0 && (
                   <ChatGroup
                     label="Cũ hơn"
                     chats={grouped.older}
                     navigate={navigate}
                     currentPath={location.pathname}
                   />
-                )} */}
+                )}  */}
               </div>
             </ScrollArea>
           </div>

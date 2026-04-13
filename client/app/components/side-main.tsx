@@ -9,11 +9,12 @@ import {
 
 import Link from "next/link";
 import { SidebarItem } from "./constants";
-import { useActiveTab } from "@/providers/sidebar-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { usePathname } from "next/navigation";
 
 export function SideMain({ items }: { items: SidebarItem[] }) {
-  const { isActive } = useActiveTab();
+  const pathname = usePathname();
+  const currentTab = pathname.split('/')[1];
 
   return (
     <TooltipProvider>
@@ -23,7 +24,7 @@ export function SideMain({ items }: { items: SidebarItem[] }) {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={isActive(item.href || "")}
+                isActive={currentTab === item.href}
                 tooltip={item.label}
               >
                 <Link href={`/${item.href}`}>

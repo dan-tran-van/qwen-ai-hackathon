@@ -1,17 +1,20 @@
 "use client";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useActiveTab } from "@/providers/sidebar-provider";
+import { usePathname } from "next/navigation";
 import { LuBell, LuUser } from "react-icons/lu";
+import { SIDEBAR_ITEMS } from "./constants";
 
 export function SidebarContentHeader() {
-  const { activeTab } = useActiveTab();
+  const pathname = usePathname();
+  const currentTab = pathname.split('/')[1];
+  const tabLabel = SIDEBAR_ITEMS.find((item) => item.href === currentTab)?.label;
 
   return (
     <header className="h-14 flex items-center justify-between border-b border-border/60 px-4 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
       <div className="flex items-center gap-3">
         <SidebarTrigger className="-ml-1" />
-        <h6 className="text-sm font-semibold text-foreground">{activeTab}</h6>
+        <h6 className="text-md font-semibold text-foreground">{tabLabel}</h6>
       </div>
       <div className="flex items-center gap-2">
         <button className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer">

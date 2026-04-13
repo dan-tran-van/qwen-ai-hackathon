@@ -10,15 +10,14 @@ const API_BASE_URL =
 export const fetchClient = createFetchClient<paths>({
   baseUrl: API_BASE_URL,
   credentials: "include", // Include cookies in requests
-  headers: {
-    "X-CSRFToken": Cookies.get("csrftoken") || "",
-  },
 });
 
 const AUTH_EXCLUDED_PATHS = new Set([
   "/api/accounts/token/refresh/",
   "/api/accounts/login/",
 ]);
+
+console.log(Cookies.get("csrftoken"));
 
 async function refreshToken() {
   try {

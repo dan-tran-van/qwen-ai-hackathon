@@ -17,16 +17,10 @@ export default function GoogleCallbackPage() {
     },
   );
   useEffect(() => {
-    if (user) {
+    if (user || data) {
       redirect("/");
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (data) {
-      redirect("/");
-    }
-  }, [data]);
+  }, [user, data]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.detail}</div>;

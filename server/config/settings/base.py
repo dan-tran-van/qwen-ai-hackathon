@@ -311,9 +311,14 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 # CORS_URLS_REGEX = r"^/api/.*$"
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+# ]
+# Match localhost with any port (0-65535)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http:\/\/localhost:([0-9]+)?$",
+    r"^http:\/\/127\.0\.0\.1:([0-9]+)?$",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Required for cookies
 

@@ -19,7 +19,7 @@ const AUTH_EXCLUDED_PATHS = new Set([
 
 async function refreshToken() {
   try {
-    const response = await fetch(`${API_BASE_URL}api/auth/refresh/`, {
+    const response = await fetch(`${API_BASE_URL}api/auth/token/refresh/`, {
       method: "POST",
       credentials: "include", // Include cookies in the refresh request
     });

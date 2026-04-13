@@ -1,8 +1,7 @@
 import {
+  LuBookOpen,
   LuBot,
   LuChartColumn,
-  LuFileText,
-  LuGitBranch,
   LuInbox,
   LuLayoutDashboard,
   LuSearch,
@@ -27,24 +26,19 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     href: "incoming-records",
   },
   {
-    label: "Documents",
-    icon: <LuFileText />,
+    label: "Library",
+    icon: <LuBookOpen />,
     href: "documents",
-  },
-  {
-    label: "Process Tracking",
-    icon: <LuGitBranch />,
-    href: "process-tracking",
-  },
-  {
-    label: "Search",
-    icon: <LuSearch />,
-    href: "smart-search",
   },
   {
     label: "AI Assistant",
     icon: <LuBot />,
     href: "ai-assistant",
+  },
+  {
+    label: "Search",
+    icon: <LuSearch />,
+    href: "smart-search",
   },
   {
     label: "Analytics",

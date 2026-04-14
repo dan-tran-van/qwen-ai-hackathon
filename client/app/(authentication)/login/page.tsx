@@ -68,6 +68,7 @@ export default function LoginPage() {
       await queryClient.invalidateQueries({
         queryKey: ["get", "/api/auth/user/"],
       });
+      router.replace("/");
     },
   });
 

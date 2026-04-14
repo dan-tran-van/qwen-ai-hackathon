@@ -85,7 +85,7 @@ export default function Dashboard() {
               {activeQueue.map((doc) => (
                 <Link
                   key={doc.id}
-                  href={`/document/${doc.id}`}
+                  href={`/incoming/${doc.id}`}
                   className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex-1 min-w-0">

@@ -16,37 +16,37 @@ export type SidebarItem = {
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
-    label: "Overview",
+    label: "Tổng quan",
     icon: <LuLayoutDashboard />,
     href: "overview",
   },
   {
-    label: "Incoming Records",
+    label: "Hồ sơ đến",
     icon: <LuInbox />,
-    href: "incoming-records",
+    href: "incoming",
   },
   {
-    label: "Library",
+    label: "Thư viện",
     icon: <LuBookOpen />,
-    href: "documents",
+    href: "library",
   },
   {
-    label: "AI Assistant",
+    label: "Trợ lý AI",
     icon: <LuBot />,
     href: "ai-assistant",
   },
   {
-    label: "Search",
+    label: "Tìm kiếm đoạn chat",
     icon: <LuSearch />,
     href: "smart-search",
   },
   {
-    label: "Analytics",
+    label: "Phân tích",
     icon: <LuChartColumn />,
     href: "analytics",
   },
   {
-    label: "Security & Logs",
+    label: "Bảo mật & nhật ký",
     icon: <LuShield />,
     href: "security",
   },

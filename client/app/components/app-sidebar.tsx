@@ -32,16 +32,6 @@ import { $api } from "@/lib/api/api";
 import { ChatGroup } from "./chat-group";
 import { usePathname } from "next/dist/client/components/navigation";
 
-const navItems = [
-  { title: "Tổng quan", url: "/overview", icon: LayoutDashboard },
-  { title: "Hồ sơ đến", url: "/incoming", icon: Inbox },
-  { title: "Thư viện", url: "/library", icon: BookOpen },
-  { title: "Trợ lý AI", url: "/ai-assistant", icon: Bot },
-  { title: "Tìm kiếm đoạn chat", url: "/smart-search", icon: Search },
-  { title: "Phân tích", url: "/analytics", icon: BarChart3 },
-  { title: "Bảo mật & nhật ký", url: "/security", icon: Shield },
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -77,37 +67,7 @@ export function AppSidebar() {
             )}
           </div>
         </div>
-        {/* <SideMain items={SIDEBAR_ITEMS} /> */}
-        {/* Main nav */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentTab === item.url}
-                    tooltip={item.title}
-                  >
-                    <Link
-                      href={item.url}
-                      className={clsx(
-                        "gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                        {
-                          "bg-sidebar-accent text-sidebar-accent-foreground":
-                            currentTab === item.url,
-                        },
-                      )}
-                    >
-                      <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SideMain items={SIDEBAR_ITEMS} />
 
         {/* Chat conversations */}
         {!collapsed && (

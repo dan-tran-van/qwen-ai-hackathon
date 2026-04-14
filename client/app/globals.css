@@ -7,6 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-secondary-background: var(--secondary-background);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
@@ -46,11 +47,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-info: var(--info);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
 }
 
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
+  --secondary-background: #f9f8f5;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
@@ -63,7 +68,7 @@
   --muted-foreground: #737373;
   --accent: #f5f5f5;
   --accent-foreground: #171717;
-  --destructive: #ef4444;
+  --destructive: #d94141;
   --border: #e5e5e5;
   --input: #e5e5e5;
   --ring: #a3a3a3;
@@ -72,7 +77,7 @@
   --chart-3: #525252;
   --chart-4: #404040;
   --chart-5: #262626;
-  --radius: 0.5rem;
+  --radius: 1rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0a0a0a;
   --sidebar-primary: #171717;
@@ -81,6 +86,9 @@
   --sidebar-accent-foreground: #171717;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #a3a3a3;
+  --warning: #f5a000;
+  --success: #30a46c;
+  --info: #4d94d9;
 }
 
 .dark {
@@ -115,6 +123,9 @@
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #737373;
+  --warning: #f5a000;
+  --success: #30a46c;
+  --info: #4d94d9;
 }
 
 @layer base {
@@ -129,4 +140,8 @@
   html {
     @apply font-sans;
   }
+}
+
+button {
+  cursor: pointer;
 }

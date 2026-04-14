@@ -15,7 +15,7 @@ export default function PlatformLayout({
           <AppSidebar />
           <SidebarInset>
             <SidebarContentHeader />
-            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-secondary-background">
               {children}
             </div>
           </SidebarInset>

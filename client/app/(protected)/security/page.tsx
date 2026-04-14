@@ -284,7 +284,7 @@ function AccessDot({ allowed }: { allowed: boolean }) {
   return (
     <div className="flex justify-center">
       <div
-        className={`h-2.5 w-2.5 rounded-full ${allowed ? "bg-primary" : "bg-border"}`}
+        className={`h-2.5 w-2.5 rounded-full ${allowed ? "bg-success" : "bg-border"}`}
       />
     </div>
   );

@@ -72,7 +72,7 @@
   --chart-3: #525252;
   --chart-4: #404040;
   --chart-5: #262626;
-  --radius: 1rem;
+  --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0a0a0a;
   --sidebar-primary: #171717;
@@ -121,9 +121,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

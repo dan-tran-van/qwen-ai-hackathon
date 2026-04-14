@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import GoogleLoginButton from "../../components/google-login-button";
+import Cookies from "js-cookie";
 
 type LoginRequest = components["schemas"]["Login"];
 
@@ -83,7 +84,12 @@ export default function LoginPage() {
       ...(isEmail ? { email: identifier } : { username: identifier }),
     };
 
-    await loginMutation.mutateAsync({ body: payload });
+    await loginMutation.mutateAsync({
+      body: payload,
+      headers: {
+        "X-CSRFToken": (Cookies.get("csrftoken")) || "",
+      },
+    });
     await queryClient.invalidateQueries({
       queryKey: ["get", "/api/auth/user/"],
     });

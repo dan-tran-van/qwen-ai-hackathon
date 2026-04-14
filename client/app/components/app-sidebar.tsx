@@ -30,6 +30,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { $api } from "@/lib/api/api";
 import { ChatGroup } from "./chat-group";
+import { usePathname } from "next/dist/client/components/navigation";
 
 const navItems = [
   { title: "Tổng quan", url: "/overview", icon: LayoutDashboard },
@@ -42,13 +43,11 @@ const navItems = [
 ];
 
 export function AppSidebar() {
-  const { user, logout } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const isActive = (url: string) => {
-    if (url === "/") return location.pathname === "/";
-    return location.pathname.startsWith(url);
-  };
+  const pathname = usePathname();
+  const currentTab = pathname;
+
   const { data, isLoading, error } = $api.useQuery(
     "get",
     "/api/chats/conversations/today/",
@@ -87,20 +86,18 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={isActive(item.url)}
+                    isActive={currentTab === item.url}
                     tooltip={item.title}
                   >
                     <Link
                       href={item.url}
-                      // end={item.url === "/"}
                       className={clsx(
                         "gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                         {
                           "bg-sidebar-accent text-sidebar-accent-foreground":
-                            isActive(item.url),
+                            currentTab === item.url,
                         },
                       )}
-                      // activeClassName="bg-sidebar-accent text-sidebar-accent-foreground"
                     >
                       <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}

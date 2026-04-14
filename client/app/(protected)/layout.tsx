@@ -15,9 +15,9 @@ export default function PlatformLayout({
           <AppSidebar />
           <SidebarInset>
             <SidebarContentHeader />
-            <main className="flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
               {children}
-            </main>
+            </div>
           </SidebarInset>
         </TooltipProvider>
       </SidebarProvider>

@@ -44,7 +44,7 @@ export default function LibraryDetail() {
   }
 
   const handleAskAI = () => {
-    navigate(`/ai-chat?libraryDoc=${doc.id}`);
+    navigate(`/ai-assistant?libraryDoc=${doc.id}`);
   };
 
   return (

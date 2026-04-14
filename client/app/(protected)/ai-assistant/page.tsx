@@ -218,9 +218,9 @@ export default function AIChat() {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-56px)] animate-fade-in">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-56px)] min-h-0 animate-fade-in">
         {/* Chat area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
           {/* Attached doc chip */}
           <div className="px-4 sm:px-6 pt-4">
             <div className="max-w-[700px] mx-auto">
@@ -303,7 +303,7 @@ export default function AIChat() {
           )}
 
           {/* Messages */}
-          <div className="flex-1 overflow-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex-1 min-h-0 overflow-auto px-4 sm:px-6 py-4 sm:py-6">
             <div className="max-w-[700px] mx-auto space-y-6">
               {messages.map((msg) => (
                 <div
@@ -349,13 +349,13 @@ export default function AIChat() {
           </div>
 
           {/* Suggestions */}
-          <div className="px-4 sm:px-6 pb-2">
-            <div className="max-w-[700px] mx-auto flex flex-wrap gap-2">
+          <div className="shrink-0 px-4 sm:px-6 pb-2">
+            <div className="max-w-[700px] mx-auto flex flex-nowrap gap-2 overflow-x-auto pb-1">
               {suggestions.map((s) => (
                 <button
                   key={s}
                   onClick={() => setInput(s)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-border/60 bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  className="shrink-0 whitespace-nowrap text-xs px-3 py-1.5 rounded-lg border border-border/60 bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
                   {s}
                 </button>
@@ -364,7 +364,7 @@ export default function AIChat() {
           </div>
 
           {/* Input */}
-          <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
+          <div className="shrink-0 px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
             <div className="max-w-[700px] mx-auto">
               <div className="flex items-end gap-2 bg-card rounded-xl border border-border/60 shadow-card p-2">
                 <button
@@ -401,7 +401,7 @@ export default function AIChat() {
 
         {/* Desktop Right panel */}
         {attachedDoc && (
-          <div className="hidden lg:flex w-[320px] border-l border-border/40 bg-card/30 flex-col">
+          <div className="hidden lg:flex w-[320px] min-h-0 border-l border-border/40 bg-card/30 flex-col">
             <div className="p-4 border-b border-border/40">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-semibold text-foreground uppercase tracking-wide">

@@ -34,7 +34,7 @@ import { usePathname } from "next/dist/client/components/navigation";
 
 const navItems = [
   { title: "Tổng quan", url: "/overview", icon: LayoutDashboard },
-  { title: "Hồ sơ đến", url: "/incoming-records", icon: Inbox },
+  { title: "Hồ sơ đến", url: "/incoming", icon: Inbox },
   { title: "Thư viện", url: "/library", icon: BookOpen },
   { title: "Trợ lý AI", url: "/ai-assistant", icon: Bot },
   { title: "Tìm kiếm đoạn chat", url: "/smart-search", icon: Search },

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 export default function Library() {
   const router = useRouter();
+  const navigate = (path: string) => router.push(path);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [agencyFilter, setAgencyFilter] = useState("");
@@ -36,7 +37,6 @@ export default function Library() {
     <>
       <div className="p-4 sm:p-6 animate-fade-in">
         <div className="max-w-[1100px] mx-auto">
-          {/* Header */}
           <div className="mb-5 sm:mb-6">
             <h1 className="text-xl font-semibold text-foreground">
               Thư viện văn bản
@@ -47,7 +47,6 @@ export default function Library() {
             </p>
           </div>
 
-          {/* Search & actions */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -70,14 +69,16 @@ export default function Library() {
                 <Filter className="h-4 w-4" />
                 Bộ lọc
               </button>
-              <button className="h-10 px-4 rounded-xl bg-primary text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90 transition">
+              <button
+                onClick={() => navigate("/library/new")}
+                className="h-10 px-4 rounded-xl bg-primary text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90 transition"
+              >
                 <Upload className="h-4 w-4" />
                 <span className="hidden sm:inline">Tải lên</span>
               </button>
             </div>
           </div>
 
-          {/* Filters */}
           {showFilters && (
             <div className="flex items-center gap-3 mb-4 flex-wrap">
               <select
@@ -118,7 +119,6 @@ export default function Library() {
             </div>
           )}
 
-          {/* Results */}
           {filtered.length === 0 ? (
             <div className="text-center py-20">
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
@@ -133,7 +133,7 @@ export default function Library() {
               {filtered.map((doc) => (
                 <button
                   key={doc.id}
-                  onClick={() => router.push(`/library/${doc.id}`)}
+                  onClick={() => navigate(`/library/${doc.id}`)}
                   className="w-full text-left bg-card rounded-xl border border-border/40 p-4 hover:border-border hover:shadow-card transition-all group"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">

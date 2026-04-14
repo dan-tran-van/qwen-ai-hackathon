@@ -4,6 +4,7 @@ import { components } from "@/lib/api/v1";
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 type UserDetails = components["schemas"]["UserDetails"];
 
@@ -24,19 +25,17 @@ export default function AuthProvider({
 }) {
   const queryClient = useQueryClient();
   const { data, isLoading, error } = $api.useQuery("get", "/api/auth/user/");
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   const logout = async () => {
-    setIsLoggingOut(true);
     await fetchClient.POST("/api/auth/logout/", {
       headers: {
         "X-CSRFToken": Cookies.get("csrftoken") || "",
       },
     });
 
-    queryClient.clear();
-    setIsLoggingOut(false);
-    window.location.href = "/login";
+    queryClient.invalidateQueries();
+    router.replace("/");
   };
 
   if (isLoading) {

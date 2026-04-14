@@ -65,10 +65,8 @@ export default function LoginPage() {
 
   const loginMutation = $api.useMutation("post", "/api/auth/login/", {
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["get", "/api/auth/user/"],
-      });
-      router.replace("/");
+      router.push("/");
+      window.location.reload();
     },
   });
 

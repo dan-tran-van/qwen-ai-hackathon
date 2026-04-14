@@ -4,12 +4,33 @@ import {
   ConfidentialityBadge,
 } from "@/components/custom/status-badge";
 import { documents } from "@/data/mock-data";
-import { Search, Filter, Upload, MoreHorizontal } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Upload,
+  MoreHorizontal,
+  Edit3,
+  Trash2,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
 
 export default function IncomingDocuments() {
   const [searchQuery, setSearchQuery] = useState("");
+  const route = useRouter();
+  const navigate = (path: string) => route.push(path);
+  const [deleteDoc, setDeleteDoc] = useState<(typeof documents)[0] | null>(
+    null,
+  );
 
   const filtered = documents.filter(
     (d) =>
@@ -39,7 +60,10 @@ export default function IncomingDocuments() {
               <span className="hidden sm:inline">Bộ lọc</span>
             </button>
           </div>
-          <button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90 transition">
+          <button
+            onClick={() => navigate("/incoming/new")}
+            className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90 transition"
+          >
             <Upload className="h-3.5 w-3.5" />
             Tải lên văn bản
           </button>
@@ -91,7 +115,7 @@ export default function IncomingDocuments() {
                   >
                     <td className="px-5 py-3">
                       <Link
-                        href={`/document/${doc.id}`}
+                        href={`/incoming/${doc.id}`}
                         className="text-sm font-mono text-primary hover:underline"
                       >
                         {doc.code}
@@ -99,7 +123,7 @@ export default function IncomingDocuments() {
                     </td>
                     <td className="px-5 py-3">
                       <Link
-                        href={`/document/${doc.id}`}
+                        href={`/incoming/${doc.id}`}
                         className="text-sm font-medium text-foreground hover:text-primary transition-colors"
                       >
                         {doc.title}
@@ -124,9 +148,10 @@ export default function IncomingDocuments() {
                       <StatusBadge status={doc.status} />
                     </td>
                     <td className="px-3 py-3">
-                      <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
+                      <RowMenu
+                        onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
+                        onDelete={() => setDeleteDoc(doc)}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -138,28 +163,122 @@ export default function IncomingDocuments() {
         {/* Mobile/Tablet Cards */}
         <div className="lg:hidden space-y-2">
           {filtered.map((doc) => (
-            <Link
+            <div
               key={doc.id}
-              href={`/document/${doc.id}`}
-              className="block bg-card rounded-xl border border-border/40 p-4 hover:shadow-card transition-all"
+              className="bg-card rounded-xl border border-border/40 p-4 hover:shadow-card transition-all"
             >
-              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span className="text-xs font-mono text-primary">
-                  {doc.code}
-                </span>
-                <ConfidentialityBadge level={doc.confidentiality} />
-                <StatusBadge status={doc.status} />
+              <div className="flex items-start justify-between gap-2">
+                <Link href={`/incoming/${doc.id}`} className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span className="text-xs font-mono text-primary">
+                      {doc.code}
+                    </span>
+                    <ConfidentialityBadge level={doc.confidentiality} />
+                    <StatusBadge status={doc.status} />
+                  </div>
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    {doc.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {doc.sender} · {doc.receivedDate} · {doc.type}
+                  </p>
+                </Link>
+                <RowMenu
+                  onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
+                  onDelete={() => setDeleteDoc(doc)}
+                />
               </div>
-              <p className="text-sm font-medium text-foreground mb-1">
-                {doc.title}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {doc.sender} · {doc.receivedDate} · {doc.type}
-              </p>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Delete dialog */}
+      <Dialog open={!!deleteDoc} onOpenChange={(v) => !v && setDeleteDoc(null)}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Xóa hồ sơ</DialogTitle>
+            <DialogDescription>
+              Bạn có chắc chắn muốn xóa hồ sơ <strong>{deleteDoc?.code}</strong>
+              ? Hành động này không thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <button
+              onClick={() => setDeleteDoc(null)}
+              className="h-9 px-4 rounded-lg border border-border/60 bg-card text-sm font-medium hover:bg-muted transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={() => setDeleteDoc(null)}
+              className="h-9 px-4 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium hover:opacity-90 transition"
+            >
+              Xóa
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
+  );
+}
+
+function RowMenu({
+  onEdit,
+  onDelete,
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(!open);
+        }}
+        className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+      >
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-8 z-50 w-40 bg-popover rounded-lg border border-border shadow-lg py-1 animate-fade-in">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(false);
+              onEdit();
+            }}
+            className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted flex items-center gap-2 transition-colors"
+          >
+            <Edit3 className="h-3.5 w-3.5" /> Chỉnh sửa
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(false);
+              onDelete();
+            }}
+            className="w-full text-left px-3 py-2 text-sm text-destructive hover:bg-destructive/5 flex items-center gap-2 transition-colors"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Xóa
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

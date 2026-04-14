@@ -36,7 +36,7 @@ const navItems = [
   { title: "Hồ sơ đến", url: "/incoming-records", icon: Inbox },
   { title: "Thư viện", url: "/library", icon: BookOpen },
   { title: "Trợ lý AI", url: "/ai-assistant", icon: Bot },
-  { title: "Tra cứu", url: "/smart-search", icon: Search },
+  { title: "Tìm kiếm đoạn chat", url: "/smart-search", icon: Search },
   { title: "Phân tích", url: "/analytics", icon: BarChart3 },
   { title: "Bảo mật & nhật ký", url: "/security", icon: Shield },
 ];

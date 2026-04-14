@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Goverment Flow AI",
   description: "Goverment Flow AI",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

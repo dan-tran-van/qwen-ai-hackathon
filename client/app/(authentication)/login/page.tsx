@@ -63,7 +63,13 @@ export default function LoginPage() {
     },
   });
 
-  const loginMutation = $api.useMutation("post", "/api/auth/login/");
+  const loginMutation = $api.useMutation("post", "/api/auth/login/", {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["get", "/api/auth/user/"],
+      });
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -87,13 +93,9 @@ export default function LoginPage() {
     await loginMutation.mutateAsync({
       body: payload,
       headers: {
-        "X-CSRFToken": (Cookies.get("csrftoken")) || "",
+        "X-CSRFToken": Cookies.get("csrftoken") || "",
       },
     });
-    await queryClient.invalidateQueries({
-      queryKey: ["get", "/api/auth/user/"],
-    });
-    router.replace("/");
   });
 
   return (

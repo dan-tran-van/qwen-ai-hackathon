@@ -100,6 +100,7 @@ LOCAL_APPS = [
     # Your stuff: custom apps go here
     "server.chats.apps.ChatsConfig",
     "server.orgs.apps.OrgsConfig",
+    "server.documents.apps.DocumentsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -331,6 +332,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/",
+    "COMPONENT_SPLIT_REQUEST": True,  # Split request body into components based on content type
 }
 # Your stuff...
 # ------------------------------------------------------------------------------

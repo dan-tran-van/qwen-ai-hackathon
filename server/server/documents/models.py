@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from model_utils.models import TimeStampedModel
 
@@ -39,10 +40,15 @@ class DocumentStatus(models.TextChoices):
 
 class WorkflowDocument(TimeStampedModel):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    title = models.CharField(max_length=255)
-    code = models.CharField(max_length=100, unique=True)
-    sender = models.CharField(max_length=255)
-    received_date = models.DateField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workflow_documents",
+    )
+    title = models.CharField(max_length=255, blank=True)
+    code = models.CharField(max_length=100, unique=True, blank=True)
+    sender = models.CharField(max_length=255, blank=True)
+    received_date = models.DateField(blank=True, null=True)
     summary = models.TextField(blank=True)
     confidentiality = models.CharField(
         max_length=20,
@@ -52,8 +58,20 @@ class WorkflowDocument(TimeStampedModel):
     department = models.CharField(
         max_length=50,
         choices=Department.choices,
-        default=Department.choices[0][0],
+        default=Department.GENERAL,
     )
+    document_type = models.CharField(
+        max_length=20,
+        choices=DocumentType.choices,
+        default=DocumentType.OTHER,
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=DocumentStatus.choices,
+        default=DocumentStatus.NEW,
+    )
+    ai_confidence = models.FloatField(null=True, blank=True)
+    subject = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"WorkflowDocument {self.id}"
@@ -62,7 +80,9 @@ class WorkflowDocument(TimeStampedModel):
 class WorkflowDocumentAttachment(TimeStampedModel):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     document = models.ForeignKey(
-        WorkflowDocument, on_delete=models.CASCADE, related_name="attachments"
+        WorkflowDocument,
+        on_delete=models.CASCADE,
+        related_name="attachments",
     )
     file = models.FileField(upload_to="workflow_documents/")
 

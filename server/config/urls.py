@@ -50,6 +50,7 @@ urlpatterns += [
     path("api/auth/google/", GoogleLogin.as_view(), name="google_login"),
     path("api/chats/", include("server.chats.urls"), name="chats-api"),
     path("api/orgs/", include("server.orgs.urls")),
+    path("api/documents/", include("server.documents.urls")),
 ]
 
 if settings.DEBUG:

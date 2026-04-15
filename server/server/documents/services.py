@@ -131,7 +131,6 @@ def generate_workflow_document_ai_analysis(file_id: str):
 
 def generate_response_with_workflow_document_attachment(
     attachment: WorkflowDocumentAttachment,
-    user_message: str,
-) -> str:
+):
     file_id = upload_workflow_document_attachment_to_openai(attachment)
-    return generate_workflow_document_ai_analysis(file_id, user_message)
+    return generate_workflow_document_ai_analysis(file_id)

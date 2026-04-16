@@ -5,6 +5,7 @@ import { departments } from "@/data/mock-data";
 
 import type { DocumentStatus, Confidentiality } from "@/data/mock-data";
 import { useRouter } from "next/navigation";
+import { $api } from "@/lib/api/api";
 
 const docTypes = [
   "Công văn",
@@ -32,6 +33,7 @@ export default function WorkflowUpload() {
   const router = useRouter();
   const navigate = (path: string) => router.push(path);
   const [fileName, setFileName] = useState("");
+  const { mutateAsync } = $api.useMutation("post", "/api/documents/upload/");
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +59,7 @@ export default function WorkflowUpload() {
           </p>
 
           <form onSubmit={handleSave} className="space-y-5">
-            <div className="bg-card rounded-xl border border-border/40 p-4 sm:p-6 space-y-4">
+            {/* <div className="bg-card rounded-xl border border-border/40 p-4 sm:p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Tiêu đề *" placeholder="Nhập tiêu đề văn bản" />
                 <Field label="Mã số" placeholder="VD: CV-2026-0200" />
@@ -68,7 +70,7 @@ export default function WorkflowUpload() {
                 <SelectField label="Trạng thái" options={statuses} />
                 <Field label="Ngày nhận" type="date" />
               </div>
-            </div>
+            </div> */}
 
             {/* File upload */}
             <div className="bg-card rounded-xl border border-border/40 p-4 sm:p-6">

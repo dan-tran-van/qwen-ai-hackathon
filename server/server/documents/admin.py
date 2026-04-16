@@ -21,6 +21,6 @@ class WorkflowDocumentAdmin(admin.ModelAdmin):
 
 @admin.register(WorkflowDocumentAttachment)
 class WorkflowDocumentAttachmentAdmin(admin.ModelAdmin):
-    list_display = ("id", "document", "file")
+    list_display = ("id", "document", "file", "upload_file_id")
     search_fields = ("document__title", "file")
     list_filter = ("document__received_date",)

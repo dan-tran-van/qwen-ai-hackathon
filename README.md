@@ -131,6 +131,7 @@ If you prefer just commands:
     cd server
     just build
     just up
+    just manage makemigrations
     just manage migrate
 
 Useful shortcuts:

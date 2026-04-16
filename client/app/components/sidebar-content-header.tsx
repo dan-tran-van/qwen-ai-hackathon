@@ -41,7 +41,7 @@ export function SidebarContentHeader() {
               <LuUser size={24} className="h-4 w-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="rounded-md">
             <DropdownMenuGroup>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuItem asChild className="cursor-pointer">

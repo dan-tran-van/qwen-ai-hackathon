@@ -1,10 +1,10 @@
 export type DocumentStatus =
-  | "Mới"
-  | "Đang xử lý"
-  | "Chờ phối hợp"
-  | "Chờ phê duyệt"
-  | "Quá hạn"
-  | "Hoàn tất";
+  | "NEW"
+  | "IN_PROGRESS"
+  | "PENDING_COORDINATION"
+  | "PENDING_APPROVAL"
+  | "OVERDUE"
+  | "COMPLETED";
 export type Confidentiality = "Thường" | "Mật" | "Tối mật" | "Tuyệt mật";
 
 export interface GovDocument {
@@ -38,7 +38,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Phòng Quản lý Hành chính",
     suggestedReviewer: "Nguyễn Văn An",
     confidentiality: "Thường",
-    status: "Mới",
+    status: "NEW",
     deadline: "2026-04-18",
     summary:
       "Đề nghị xem xét cấp giấy phép hoạt động cho Công ty TNHH ABC tại khu vực quận 7. Hồ sơ đầy đủ theo quy định tại Nghị định 01/2021/NĐ-CP.",
@@ -58,7 +58,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Phòng Kế hoạch Tài chính",
     suggestedReviewer: "Trần Thị Bình",
     confidentiality: "Mật",
-    status: "Đang xử lý",
+    status: "IN_PROGRESS",
     deadline: "2026-04-15",
     summary:
       "Báo cáo tiến độ dự án nâng cấp cơ sở hạ tầng khu dân cư phường 5, quận 3. Tiến độ đạt 67%, dự kiến hoàn thành Q3/2026.",
@@ -78,7 +78,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Phòng Tài nguyên Môi trường",
     suggestedReviewer: "Lê Hoàng Phúc",
     confidentiality: "Thường",
-    status: "Chờ phối hợp",
+    status: "PENDING_COORDINATION",
     deadline: "2026-04-20",
     summary:
       "Xin ý kiến góp ý về dự thảo quy hoạch sử dụng đất giai đoạn 2026–2030 của quận 3. Cần phản hồi trước ngày 20/04.",
@@ -98,7 +98,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Ban Giám đốc",
     suggestedReviewer: "Phạm Minh Đức",
     confidentiality: "Tối mật",
-    status: "Chờ phê duyệt",
+    status: "PENDING_APPROVAL",
     deadline: "2026-04-12",
     summary:
       "Trình phê duyệt phương án xử lý khiếu nại của cư dân khu vực tái định cư. Đề xuất 3 phương án giải quyết.",
@@ -118,7 +118,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Phòng Tổng hợp",
     suggestedReviewer: "Võ Thị Hương",
     confidentiality: "Thường",
-    status: "Hoàn tất",
+    status: "COMPLETED",
     deadline: "2026-04-10",
     summary:
       "Kết luận cuộc họp giao ban tuần ngày 03/04/2026. Các sở ngành triển khai 5 nhiệm vụ trọng tâm tuần tới.",
@@ -138,7 +138,7 @@ export const documents: GovDocument[] = [
     suggestedDept: "Phòng Tổ chức Cán bộ",
     suggestedReviewer: "Nguyễn Văn An",
     confidentiality: "Thường",
-    status: "Quá hạn",
+    status: "OVERDUE",
     deadline: "2026-04-08",
     summary:
       "Đề nghị phối hợp tổ chức hội nghị sơ kết công tác cải cách hành chính 6 tháng đầu năm 2026.",
@@ -298,12 +298,12 @@ export const departments = [
 ];
 
 export const statusColors: Record<DocumentStatus, string> = {
-  Mới: "bg-info/10 text-info",
-  "Đang xử lý": "bg-primary/10 text-primary",
-  "Chờ phối hợp": "bg-warning/10 text-warning",
-  "Chờ phê duyệt": "bg-accent text-accent-foreground",
-  "Quá hạn": "bg-destructive/10 text-destructive",
-  "Hoàn tất": "bg-success/10 text-success",
+  NEW: "bg-info/10 text-info",
+  IN_PROGRESS: "bg-primary/10 text-primary",
+  PENDING_COORDINATION: "bg-warning/10 text-warning",
+  PENDING_APPROVAL: "bg-accent text-accent-foreground",
+  OVERDUE: "bg-destructive/10 text-destructive",
+  COMPLETED: "bg-success/10 text-success",
 };
 
 export const confidentialityColors: Record<Confidentiality, string> = {

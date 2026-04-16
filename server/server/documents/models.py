@@ -77,6 +77,13 @@ class WorkflowDocument(TimeStampedModel):
     subject = models.CharField(max_length=255, blank=True)
     deadline = models.DateField(blank=True, null=True)
 
+    suggested_reviewer = models.CharField(max_length=255, null=True, blank=True)
+    suggested_dept = models.CharField(max_length=255, null=True, blank=True)
+
+    entities = models.JSONField(default=list, blank=True)
+    risk_flags = models.JSONField(default=list, blank=True)
+    related_docs = models.JSONField(default=list, blank=True)
+
     def __str__(self):
         return f"WorkflowDocument {self.id}"
 

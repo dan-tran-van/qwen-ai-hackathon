@@ -917,6 +917,11 @@ export interface components {
         WorkflowDocument: {
             /** Format: uuid */
             readonly id: string;
+            suggested_reviewer?: string | null;
+            suggested_dept?: string | null;
+            entities?: string[];
+            risk_flags?: string[];
+            related_docs?: string[];
             /** Format: date-time */
             readonly created: string;
             /** Format: date-time */

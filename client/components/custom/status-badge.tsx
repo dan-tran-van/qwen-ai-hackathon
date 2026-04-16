@@ -1,3 +1,4 @@
+import { DOCUMENT_STATUS_LABEL } from "@/app/(protected)/incoming/constants";
 import {
   DocumentStatus,
   Confidentiality,
@@ -5,12 +6,12 @@ import {
   confidentialityColors,
 } from "@/data/mock-data";
 
-export function StatusBadge({ status }: { status: DocumentStatus }) {
+export function StatusBadge({ status }: { status?: DocumentStatus }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusColors[status]}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusColors[status || "NEW"]}`}
     >
-      {status}
+      {DOCUMENT_STATUS_LABEL[status || "NEW"]}
     </span>
   );
 }

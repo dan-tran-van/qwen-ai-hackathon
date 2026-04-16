@@ -49,6 +49,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { $api } from "@/lib/api/api";
+import { DOCUMENT_TYPE_LABEL } from "../constants";
 
 // Stage-dependent config
 const stageConfig: Record<string, { sections: string[]; actions: string[] }> = {
@@ -142,11 +143,6 @@ export default function DocumentDetail() {
   const { id } = useParams();
   const router = useRouter();
   const navigate = (url: string) => router.push(url);
-  const doc = documents.find((d) => d.id === id) || documents[0];
-  const relatedAudit = auditLog
-    .filter((a) => a.document === doc.code)
-    .slice(0, 3);
-  const config = stageConfig[doc.status] || stageConfig["Mới"];
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showForwardDialog, setShowForwardDialog] = useState(false);
@@ -159,24 +155,36 @@ export default function DocumentDetail() {
   const [showResponsePreview, setShowResponsePreview] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState(false);
 
-  const handleAskAI = () =>
-    navigate(`/ai-chat?source=workflow&docId=${doc.id}`);
-
-  const { data, isLoading, error } = $api.useQuery(
-    "get",
-    "/api/documents/{id}/",
-    {
-      params: {
-        path: {
-          id: String(id),
-        },
+  const {
+    data: doc,
+    isLoading,
+    error,
+  } = $api.useQuery("get", "/api/documents/{id}/", {
+    params: {
+      path: {
+        id: String(id),
       },
     },
-  );
+  });
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  if (!doc) {
+    return <div>Không tìm thấy văn bản</div>;
+  }
+
+  const relatedAudit = auditLog
+    .filter((a) => a.document === doc.code)
+    .slice(0, 3);
+
+  const config = stageConfig[doc?.status] || stageConfig["Mới"];
+
+  const handleAskAI = () => {
+    if (!doc) return;
+    navigate(`/ai-chat?source=workflow&docId=${doc.id}`);
+  };
 
   const handleGenerateResponse = () => {
     setGeneratingResponse(true);
@@ -230,13 +238,13 @@ export default function DocumentDetail() {
                 Số: {doc.code}
               </p>
               <p className="text-xs text-muted-foreground mb-4">
-                Ngày: {doc.receivedDate}
+                Ngày: {doc.received_date}
               </p>
               <h4 className="text-sm font-semibold text-foreground text-center mb-4">
-                {doc.title.toUpperCase()}
+                {doc?.title?.toUpperCase()}
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                {doc.summary}
+                {doc?.summary}
               </p>
               <div className="mt-8 text-right">
                 <p className="text-xs text-muted-foreground font-medium">
@@ -301,27 +309,34 @@ export default function DocumentDetail() {
                       Confidence
                     </span>
                     <span className="text-xs font-semibold text-primary">
-                      {Math.round(doc.aiConfidence * 100)}%
+                      {Math.round((doc?.ai_confidence || 0) * 100)}%
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <MetaField label="Tiêu đề trích xuất" value={doc.title} />
                   <MetaField label="Chủ đề" value={doc.subject} />
-                  <MetaField label="Loại văn bản" value={doc.type} />
+                  <MetaField
+                    label="Loại văn bản"
+                    value={
+                      doc?.document_type
+                        ? DOCUMENT_TYPE_LABEL[doc.document_type]
+                        : ""
+                    }
+                  />
                   <MetaField
                     label="Hạn xử lý"
-                    value={doc.deadline}
+                    value={doc?.deadline}
                     icon={<Clock className="h-3 w-3 text-warning" />}
                   />
                   <MetaField
                     label="Phòng ban đề xuất"
-                    value={doc.suggestedDept}
+                    value={doc?.suggested_dept}
                     icon={<Target className="h-3 w-3 text-primary" />}
                   />
                   <MetaField
                     label="Người xử lý đề xuất"
-                    value={doc.suggestedReviewer}
+                    value={doc?.suggested_reviewer}
                     icon={<User className="h-3 w-3 text-primary" />}
                   />
                 </div>
@@ -338,17 +353,19 @@ export default function DocumentDetail() {
                     Thực thể chính
                   </label>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
-                    {doc.entities.map((e) => (
-                      <span
-                        key={e}
-                        className="px-2 py-0.5 rounded-md bg-accent text-xs text-accent-foreground"
-                      >
-                        {e}
-                      </span>
-                    ))}
+                    {doc?.entities && doc?.entities?.length > 0
+                      ? doc?.entities?.map((e) => (
+                          <span
+                            key={e}
+                            className="px-2 py-0.5 rounded-md bg-accent text-xs text-accent-foreground"
+                          >
+                            {e}
+                          </span>
+                        ))
+                      : null}
                   </div>
                 </div>
-                {doc.riskFlags.length > 0 && (
+                {doc?.risk_flags && doc?.risk_flags?.length > 0 && (
                   <div className="mt-4 p-3 rounded-lg bg-destructive/5 border border-destructive/10">
                     <div className="flex items-center gap-1.5 mb-1">
                       <AlertTriangle className="h-3 w-3 text-destructive" />
@@ -356,20 +373,21 @@ export default function DocumentDetail() {
                         Cảnh báo rủi ro
                       </span>
                     </div>
-                    {doc.riskFlags.map((f) => (
-                      <p key={f} className="text-xs text-muted-foreground">
-                        • {f}
-                      </p>
-                    ))}
+                    {doc?.risk_flags &&
+                      doc.risk_flags.map((f) => (
+                        <p key={f} className="text-xs text-muted-foreground">
+                          • {f}
+                        </p>
+                      ))}
                   </div>
                 )}
-                {doc.relatedDocs.length > 0 && (
+                {doc?.related_docs && doc?.related_docs?.length > 0 && (
                   <div className="mt-4">
                     <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
                       Văn bản liên quan
                     </label>
                     <div className="flex flex-wrap gap-2 mt-1.5">
-                      {doc.relatedDocs.map((r) => (
+                      {doc?.related_docs?.map((r) => (
                         <span
                           key={r}
                           className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
@@ -467,7 +485,7 @@ export default function DocumentDetail() {
                 <h3 className="text-sm font-semibold text-foreground mb-3">
                   Phản hồi chính thức
                 </h3>
-                {doc.status === "Hoàn tất" ? (
+                {doc?.status === "COMPLETED" ? (
                   <div className="p-3 rounded-lg bg-success/5 border border-success/20 text-sm text-foreground">
                     Văn bản phản hồi đã được phê duyệt và phát hành. Mã phản
                     hồi: PH-{doc.code}.
@@ -836,7 +854,7 @@ export default function DocumentDetail() {
               V/v: Phản hồi {doc.code} – {doc.title}
             </p>
             <p>
-              Căn cứ nội dung văn bản {doc.code} ngày {doc.receivedDate}, sau
+              Căn cứ nội dung văn bản {doc.code} ngày {doc.received_date}, sau
               khi xem xét, chúng tôi có ý kiến như sau:
             </p>
             <p>
@@ -844,13 +862,13 @@ export default function DocumentDetail() {
               trình.
             </p>
             <p>
-              2. Đề xuất: Phê duyệt theo phương án do phòng {doc.suggestedDept}{" "}
+              2. Đề xuất: Phê duyệt theo phương án do phòng {doc.suggested_dept}{" "}
               trình bày.
             </p>
             <p className="text-right mt-4 font-medium">
               Trưởng phòng
               <br />
-              {doc.suggestedReviewer}
+              {doc?.suggested_reviewer}
             </p>
           </div>
           <DialogFooter className="gap-2">
@@ -884,7 +902,7 @@ function MetaField({
   icon,
 }: {
   label: string;
-  value: string;
+  value?: string | null | undefined;
   icon?: React.ReactNode;
 }) {
   return (

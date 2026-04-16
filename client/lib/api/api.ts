@@ -43,6 +43,12 @@ async function refreshToken() {
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
     const accessToken = Cookies.get("access");
+    const csrfToken = Cookies.get("csrftoken");
+
+    if (csrfToken) {
+      request.headers.set("X-CSRFToken", csrfToken);
+    }
+
     if (!accessToken) return request;
 
     request.headers.set("Authorization", `Bearer ${accessToken}`);

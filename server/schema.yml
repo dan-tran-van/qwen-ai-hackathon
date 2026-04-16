@@ -2022,6 +2022,24 @@ components:
           type: string
           format: uuid
           readOnly: true
+        suggested_reviewer:
+          type: string
+          nullable: true
+        suggested_dept:
+          type: string
+          nullable: true
+        entities:
+          type: array
+          items:
+            type: string
+        risk_flags:
+          type: array
+          items:
+            type: string
+        related_docs:
+          type: array
+          items:
+            type: string
         created:
           type: string
           format: date-time

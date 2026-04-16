@@ -4,6 +4,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
+from pydantic import Field
 
 from openai import OpenAI
 from pydantic import BaseModel
@@ -52,7 +53,7 @@ class WorkflowDocument(BaseModel):
     title: str
     code: str
     sender: str
-    received_date: str
+    received_date: str | None = None
     summary: str
     confidentiality: ConfidentialityLevel
     department: Department
@@ -60,8 +61,14 @@ class WorkflowDocument(BaseModel):
     status: DocumentStatus
     ai_confidence: float
     subject: str
-    deadline: str
+    deadline: str | None = None
 
+    suggested_reviewer: str | None = None
+    suggested_dept: str | None = None
+
+    entities: list[str] = Field(default_factory=list)
+    risk_flags: list[str] = Field(default_factory=list)
+    related_docs: list[str] = Field(default_factory=list)
 
 def get_openai_client() -> OpenAI:
     return OpenAI(
@@ -136,8 +143,9 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                         "title": {"type": "string"},
                         "code": {"type": "string"},
                         "sender": {"type": "string"},
-                        "received_date": {"type": "string"},
+                        "received_date": {"type": ["string", "null"]},
                         "summary": {"type": "string"},
+                        "deadline": {"type": ["string", "null"]},
                         "confidentiality": {
                             "type": "string",
                             "enum": [
@@ -184,6 +192,20 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                         },
                         "ai_confidence": {"type": "number"},
                         "subject": {"type": "string"},
+                        "suggested_reviewer": {"type": ["string", "null"]},
+                        "suggested_dept": {"type": ["string", "null"]},
+                        "entities": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "risk_flags": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "related_docs": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
                     },
                     "required": [
                         "title",
@@ -198,6 +220,11 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                         "ai_confidence",
                         "subject",
                         "deadline",
+                        "entities",
+                        "risk_flags",
+                        "related_docs",
+                        "suggested_reviewer",
+                        "suggested_dept",
                     ],
                 },
             }

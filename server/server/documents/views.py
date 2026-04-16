@@ -78,3 +78,9 @@ class WorkflowDocumentListView(generics.ListAPIView):
     queryset = WorkflowDocument.objects.all()
     serializer_class = WorkflowDocumentSerializer
     permission_classes = [IsAuthenticated]
+
+
+class WorkflowDocumentDetailView(generics.RetrieveAPIView):
+    queryset = WorkflowDocument.objects.all()
+    serializer_class = WorkflowDocumentSerializer
+    permission_classes = [IsAuthenticated]

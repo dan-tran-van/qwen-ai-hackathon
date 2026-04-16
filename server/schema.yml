@@ -575,6 +575,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedWorkflowDocumentList'
           description: ''
+  /api/documents/{id}/:
+    get:
+      operationId: documents_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - documents
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDocument'
+          description: ''
   /api/documents/upload/:
     post:
       operationId: documents_upload_create

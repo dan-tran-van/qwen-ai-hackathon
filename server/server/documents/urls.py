@@ -1,6 +1,8 @@
 from django.urls import path
 
-from server.documents.views import WorkflowDocumentListView, WorkflowDocumentUploadView
+from server.documents.views import WorkflowDocumentDetailView
+from server.documents.views import WorkflowDocumentListView
+from server.documents.views import WorkflowDocumentUploadView
 
 urlpatterns = [
     path(
@@ -12,5 +14,10 @@ urlpatterns = [
         "",
         WorkflowDocumentListView.as_view(),
         name="workflow_document_list",
+    ),
+    path(
+        "<uuid:pk>/",
+        WorkflowDocumentDetailView.as_view(),
+        name="workflow_document_detail",
     ),
 ]

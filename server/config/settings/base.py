@@ -5,6 +5,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -325,6 +326,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http:\/\/127\.0\.0\.1:([0-9]+)?$",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Required for cookies
+CORS_ALLOW_HEADERS = list(default_headers) + ["x-retry"]
 
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings

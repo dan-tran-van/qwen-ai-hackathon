@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/dialog";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { $api } from "@/lib/api/api";
 
 // Stage-dependent config
 const stageConfig: Record<string, { sections: string[]; actions: string[] }> = {
@@ -160,6 +161,22 @@ export default function DocumentDetail() {
 
   const handleAskAI = () =>
     navigate(`/ai-chat?source=workflow&docId=${doc.id}`);
+
+  const { data, isLoading, error } = $api.useQuery(
+    "get",
+    "/api/documents/{id}/",
+    {
+      params: {
+        path: {
+          id: String(id),
+        },
+      },
+    },
+  );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   const handleGenerateResponse = () => {
     setGeneratingResponse(true);

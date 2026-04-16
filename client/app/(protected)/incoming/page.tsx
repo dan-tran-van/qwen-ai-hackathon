@@ -186,89 +186,62 @@ export default function IncomingDocuments() {
                   ))}
                 </tbody>
               ))}
-
-              <tbody className="divide-y divide-border/30">
-                {filtered.map((doc) => (
-                  <tr
-                    key={doc.id}
-                    className="hover:bg-muted/20 transition-colors"
-                  >
-                    <td className="px-5 py-3">
-                      <Link
-                        href={`/incoming/${doc.id}`}
-                        className="text-sm font-mono text-primary hover:underline"
-                      >
-                        {doc.code}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-3">
-                      <Link
-                        href={`/incoming/${doc.id}`}
-                        className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                      >
-                        {doc.title}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-3 text-sm text-muted-foreground">
-                      {doc.sender}
-                    </td>
-                    <td className="px-5 py-3 text-sm text-muted-foreground">
-                      {doc.receivedDate}
-                    </td>
-                    <td className="px-5 py-3 text-sm text-muted-foreground">
-                      {doc.type}
-                    </td>
-                    <td className="px-5 py-3 text-xs text-muted-foreground">
-                      {doc.suggestedDept}
-                    </td>
-                    <td className="px-5 py-3">
-                      <ConfidentialityBadge level={doc.confidentiality} />
-                    </td>
-                    <td className="px-5 py-3">
-                      <StatusBadge status={doc.status} />
-                    </td>
-                    <td className="px-3 py-3">
-                      <RowMenu
-                        onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
-                        onDelete={() => setDeleteDoc(doc)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
             </table>
           </div>
         </div>
 
         {/* Mobile/Tablet Cards */}
         <div className="lg:hidden space-y-2">
-          {filtered.map((doc) => (
-            <div
-              key={doc.id}
-              className="bg-card rounded-xl border border-border/40 p-4 hover:shadow-card transition-all"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <Link href={`/incoming/${doc.id}`} className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className="text-xs font-mono text-primary">
+          {data?.pages.map((page, i) => (
+            <tbody key={i}>
+              {page.results.map((doc: any) => (
+                <tr
+                  key={doc.id}
+                  className="hover:bg-muted/20 transition-colors"
+                >
+                  <td className="px-5 py-3">
+                    <Link
+                      href={`/incoming/${doc.id}`}
+                      className="text-sm font-mono text-primary hover:underline"
+                    >
                       {doc.code}
-                    </span>
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3">
+                    <Link
+                      href={`/incoming/${doc.id}`}
+                      className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      {doc.title}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3 text-sm text-muted-foreground">
+                    {doc.sender}
+                  </td>
+                  <td className="px-5 py-3 text-sm text-muted-foreground">
+                    {doc.receivedDate}
+                  </td>
+                  <td className="px-5 py-3 text-sm text-muted-foreground">
+                    {doc.type}
+                  </td>
+                  <td className="px-5 py-3 text-xs text-muted-foreground">
+                    {doc.suggestedDept}
+                  </td>
+                  <td className="px-5 py-3">
                     <ConfidentialityBadge level={doc.confidentiality} />
+                  </td>
+                  <td className="px-5 py-3">
                     <StatusBadge status={doc.status} />
-                  </div>
-                  <p className="text-sm font-medium text-foreground mb-1">
-                    {doc.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {doc.sender} · {doc.receivedDate} · {doc.type}
-                  </p>
-                </Link>
-                <RowMenu
-                  onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
-                  onDelete={() => setDeleteDoc(doc)}
-                />
-              </div>
-            </div>
+                  </td>
+                  <td className="px-3 py-3">
+                    <RowMenu
+                      onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
+                      onDelete={() => setDeleteDoc(doc)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           ))}
         </div>
       </div>

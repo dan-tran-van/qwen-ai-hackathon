@@ -4,6 +4,7 @@ import { ArrowLeft, Sparkles, Check, RotateCcw, Upload, X } from "lucide-react";
 import { documents, departments } from "@/data/mock-data";
 import type { DocumentStatus, Confidentiality } from "@/data/mock-data";
 import { useParams, useRouter } from "next/navigation";
+import { $api } from "@/lib/api/api";
 
 const docTypes = [
   "Công văn",
@@ -30,30 +31,54 @@ const confidentialityLevels: Confidentiality[] = [
 export default function WorkflowEdit() {
   const { id } = useParams();
   const router = useRouter();
+  const {
+    data: doc,
+    isLoading,
+    error,
+  } = $api.useQuery("get", "/api/documents/{id}/", {
+    params: {
+      path: {
+        id: String(id),
+      },
+    },
+  });
   const navigate = (path: string) => router.push(path);
-  const doc = documents.find((d) => d.id === id);
+  // const doc = documents.find((d) => d.id === id);
   const [showAiSuggestions, setShowAiSuggestions] = useState(false);
   const [fileName, setFileName] = useState(doc ? `${doc.code}.pdf` : "");
 
-  if (!doc) {
+  if (isLoading) {
     return (
       <>
         <div className="flex items-center justify-center h-96">
-          <p className="text-sm text-muted-foreground">Không tìm thấy hồ sơ.</p>
+          <RotateCcw className="h-6 w-6 text-muted-foreground animate-spin" />
+          <span className="text-sm text-muted-foreground ml-2">
+            Đang tải...
+          </span>
         </div>
       </>
     );
   }
 
-  const aiSuggestions = {
-    summary: doc.summary,
-    type: doc.type,
-    subject: doc.subject,
-    entities: doc.entities.join(", "),
-    deadline: doc.deadline,
-    suggestedDept: doc.suggestedDept,
-    riskFlags: doc.riskFlags.join("; ") || "Không phát hiện",
-  };
+  // if (!doc) {
+  //   return (
+  //     <>
+  //       <div className="flex items-center justify-center h-96">
+  //         <p className="text-sm text-muted-foreground">Không tìm thấy hồ sơ.</p>
+  //       </div>
+  //     </>
+  //   );
+  // }
+
+  // const aiSuggestions = {
+  //   summary: doc.summary,
+  //   type: doc.type,
+  //   subject: doc.subject,
+  //   entities: doc.entities.join(", "),
+  //   deadline: doc.deadline,
+  //   suggestedDept: doc.suggestedDept,
+  //   riskFlags: doc.riskFlags.join("; ") || "Không phát hiện",
+  // };
 
   return (
     <>
@@ -72,7 +97,7 @@ export default function WorkflowEdit() {
                 Chỉnh sửa hồ sơ
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {doc.code} – {doc.title}
+                {doc?.code} – {doc?.title}
               </p>
             </div>
             <button
@@ -93,33 +118,33 @@ export default function WorkflowEdit() {
             <div className="flex-1 space-y-5">
               <div className="bg-card rounded-xl border border-border/40 p-4 sm:p-6 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <EditField label="Tiêu đề" defaultValue={doc.title} />
-                  <EditField label="Mã số" defaultValue={doc.code} />
-                  <EditField label="Đơn vị gửi" defaultValue={doc.sender} />
+                  <EditField label="Tiêu đề" defaultValue={doc?.title} />
+                  <EditField label="Mã số" defaultValue={doc?.code} />
+                  <EditField label="Đơn vị gửi" defaultValue={doc?.sender} />
                   <EditSelect
                     label="Phòng ban"
                     options={departments}
-                    defaultValue={doc.suggestedDept}
+                    defaultValue={doc?.department}
                   />
                   <EditSelect
                     label="Loại văn bản"
                     options={docTypes}
-                    defaultValue={doc.type}
+                    defaultValue={doc?.type}
                   />
                   <EditSelect
                     label="Bảo mật"
                     options={confidentialityLevels}
-                    defaultValue={doc.confidentiality}
+                    defaultValue={doc?.confidentiality}
                   />
                   <EditSelect
                     label="Trạng thái"
                     options={statuses}
-                    defaultValue={doc.status}
+                    defaultValue={doc?.status}
                   />
                   <EditField
                     label="Hạn xử lý"
                     type="date"
-                    defaultValue={doc.deadline}
+                    defaultValue={doc?.deadline}
                   />
                 </div>
 
@@ -128,7 +153,7 @@ export default function WorkflowEdit() {
                     Tóm tắt
                   </label>
                   <textarea
-                    defaultValue={doc.summary}
+                    defaultValue={doc?.summary}
                     rows={3}
                     className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition resize-none"
                   />
@@ -206,13 +231,13 @@ export default function WorkflowEdit() {
                     Kết quả phân tích từ tệp đính kèm. Nhấn ✓ để áp dụng.
                   </p>
                   <div className="space-y-3">
-                    {Object.entries(aiSuggestions).map(([key, value]) => (
+                    {/* {Object.entries(aiSuggestions).map(([key, value]) => (
                       <AiSuggestionRow
                         key={key}
                         label={aiFieldLabels[key] || key}
                         value={value}
-                      />
-                    ))}
+                      /> */}
+                    {/* ))} */}
                   </div>
                 </div>
               </div>

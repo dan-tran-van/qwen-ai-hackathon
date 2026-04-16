@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { $api } from "@/lib/api/api";
+import { extractPageFromNext } from "@/lib/utils";
 
 export default function IncomingDocuments() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +33,23 @@ export default function IncomingDocuments() {
   const [deleteDoc, setDeleteDoc] = useState<(typeof documents)[0] | null>(
     null,
   );
+  const { data, isLoading, error } = $api.useInfiniteQuery(
+    "get",
+    "/api/documents/",
+    {},
+    {
+      pageParamName: "page", // <-- important for DRF page-number style
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => {
+        // DRF returns `next` as a URL or null
+        // return the *page* number (or undefined/null to stop)
+        return extractPageFromNext((lastPage as any).next ?? null);
+      },
+    },
+  );
+  if (data) {
+    console.log("Fetched documents:", data.pages.flat());
+  }
 
   const filtered = documents.filter(
     (d) =>
@@ -107,6 +126,67 @@ export default function IncomingDocuments() {
                   <th className="w-10"></th>
                 </tr>
               </thead>
+              {isLoading && (
+                <tbody>
+                  <tr>
+                    <td colSpan={11} className="text-center py-10">
+                      Đang tải...
+                    </td>
+                  </tr>
+                </tbody>
+              )}
+              {data?.pages.map((page, i) => (
+                <tbody key={i}>
+                  {page.results.map((doc: any) => (
+                    <tr
+                      key={doc.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="px-5 py-3">
+                        <Link
+                          href={`/incoming/${doc.id}`}
+                          className="text-sm font-mono text-primary hover:underline"
+                        >
+                          {doc.code}
+                        </Link>
+                      </td>
+                      <td className="px-5 py-3">
+                        <Link
+                          href={`/incoming/${doc.id}`}
+                          className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                        >
+                          {doc.title}
+                        </Link>
+                      </td>
+                      <td className="px-5 py-3 text-sm text-muted-foreground">
+                        {doc.sender}
+                      </td>
+                      <td className="px-5 py-3 text-sm text-muted-foreground">
+                        {doc.receivedDate}
+                      </td>
+                      <td className="px-5 py-3 text-sm text-muted-foreground">
+                        {doc.type}
+                      </td>
+                      <td className="px-5 py-3 text-xs text-muted-foreground">
+                        {doc.suggestedDept}
+                      </td>
+                      <td className="px-5 py-3">
+                        <ConfidentialityBadge level={doc.confidentiality} />
+                      </td>
+                      <td className="px-5 py-3">
+                        <StatusBadge status={doc.status} />
+                      </td>
+                      <td className="px-3 py-3">
+                        <RowMenu
+                          onEdit={() => navigate(`/incoming/${doc.id}/edit`)}
+                          onDelete={() => setDeleteDoc(doc)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
+
               <tbody className="divide-y divide-border/30">
                 {filtered.map((doc) => (
                   <tr

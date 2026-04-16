@@ -1,3 +1,4 @@
+from hashlib import file_digest
 import uuid
 
 from django.conf import settings
@@ -46,7 +47,7 @@ class WorkflowDocument(TimeStampedModel):
         related_name="workflow_documents",
     )
     title = models.CharField(max_length=255, blank=True)
-    code = models.CharField(max_length=100, unique=True, blank=True)
+    code = models.CharField(max_length=100, blank=True)
     sender = models.CharField(max_length=255, blank=True)
     received_date = models.DateField(blank=True, null=True)
     summary = models.TextField(blank=True)
@@ -85,6 +86,7 @@ class WorkflowDocumentAttachment(TimeStampedModel):
         related_name="attachments",
     )
     file = models.FileField(upload_to="workflow_documents/")
+    upload_file_id = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"Attachment {self.id} for Document {self.document.id}"

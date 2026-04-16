@@ -36,3 +36,7 @@ logs *args:
 # manage: Executes `manage.py` command.
 manage +args:
     @docker compose run --rm django python ./manage.py {{args}}
+
+# schema: Generates OpenAPI schema.
+schema:
+    @docker compose run --rm django python ./manage.py spectacular --file schema.yml

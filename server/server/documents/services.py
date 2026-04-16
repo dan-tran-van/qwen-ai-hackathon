@@ -1,7 +1,9 @@
+import mimetypes
 import os
 from enum import StrEnum
 from pathlib import Path
 from typing import TYPE_CHECKING
+from typing import Any
 
 from openai import OpenAI
 from pydantic import BaseModel
@@ -63,17 +65,6 @@ def get_openai_client() -> OpenAI:
     )
 
 
-def upload_file_to_openai(file_path: str) -> str:
-    client = get_openai_client()
-    with Path(file_path).open("rb") as file_handle:
-        uploaded_file = client.files.create(
-            file=file_handle,
-            purpose="user_data",
-        )
-
-    return uploaded_file.id
-
-
 def upload_workflow_document_attachment_to_openai(
     attachment: WorkflowDocumentAttachment,
 ) -> str:
@@ -82,9 +73,12 @@ def upload_workflow_document_attachment_to_openai(
     attachment.file.open("rb")
     try:
         file_bytes = attachment.file.read()
-        filename = attachment.file.name.split("/")[-1]
+        filename = Path(attachment.file.name).name
+
+        guessed_content_type, _ = mimetypes.guess_type(filename)
         content_type = (
             getattr(attachment.file.file, "content_type", None)
+            or guessed_content_type
             or "application/octet-stream"
         )
 
@@ -98,35 +92,107 @@ def upload_workflow_document_attachment_to_openai(
     return uploaded_file.id
 
 
-def generate_workflow_document_ai_analysis(file_id: str):
-
+def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
     client = get_openai_client()
-    completion = client.chat.completions.parse(
+
+    response = client.responses.create(
         model="gpt-5",
-        messages=[
+        input=[
             {
                 "role": "user",
                 "content": [
                     {
-                        "type": "file",
-                        "file": {
-                            "file_id": file_id,
-                        },
+                        "type": "input_file",
+                        "file_id": file_id,
                     },
                     {
-                        "type": "text",
-                        "text": "Analyze the content of the file and extract relevant "
-                        "information to populate the WorkflowDocument fields. Provide a"
-                        " summary, determine the confidentiality level, document type, "
-                        "department, and suggest an appropriate status based on the"
-                        " content.",
+                        "type": "input_text",
+                        "text": (
+                            "Analyze this document and extract the following fields as JSON: "
+                            "title, code, sender, received_date, summary, confidentiality, "
+                            "department, document_type, status, ai_confidence, subject. "
+                            "Use these enums exactly:\n"
+                            "confidentiality: UNCLASSIFIED, CONFIDENTIAL, SECRET, TOP_SECRET\n"
+                            "department: ADMIN, PLANNING, ENVIRONMENT, GENERAL, HUMAN_RESOURCES, MANAGEMENT, CLERK\n"
+                            "document_type: OFFICIAL_LETTER, REPORT, DECISION, OTHER\n"
+                            "status: NEW, IN_PROGRESS, PENDING_COORDINATION, PENDING_APPROVAL, OVERDUE, COMPLETED"
+                        ),
                     },
                 ],
-            },
+            }
         ],
-        response_format=WorkflowDocument,
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "workflow_document",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "title": {"type": "string"},
+                        "code": {"type": "string"},
+                        "sender": {"type": "string"},
+                        "received_date": {"type": "string"},
+                        "summary": {"type": "string"},
+                        "confidentiality": {
+                            "type": "string",
+                            "enum": [
+                                "UNCLASSIFIED",
+                                "CONFIDENTIAL",
+                                "SECRET",
+                                "TOP_SECRET",
+                            ],
+                        },
+                        "department": {
+                            "type": "string",
+                            "enum": [
+                                "ADMIN",
+                                "PLANNING",
+                                "ENVIRONMENT",
+                                "GENERAL",
+                                "HUMAN_RESOURCES",
+                                "MANAGEMENT",
+                                "CLERK",
+                            ],
+                        },
+                        "document_type": {
+                            "type": "string",
+                            "enum": ["OFFICIAL_LETTER", "REPORT", "DECISION", "OTHER"],
+                        },
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "NEW",
+                                "IN_PROGRESS",
+                                "PENDING_COORDINATION",
+                                "PENDING_APPROVAL",
+                                "OVERDUE",
+                                "COMPLETED",
+                            ],
+                        },
+                        "ai_confidence": {"type": "number"},
+                        "subject": {"type": "string"},
+                    },
+                    "required": [
+                        "title",
+                        "code",
+                        "sender",
+                        "received_date",
+                        "summary",
+                        "confidentiality",
+                        "department",
+                        "document_type",
+                        "status",
+                        "ai_confidence",
+                        "subject",
+                    ],
+                },
+            }
+        },
     )
-    return completion.choices[0].message.parsed or ""
+
+    analysis = WorkflowDocument.model_validate_json(response.output_text)
+    return analysis
 
 
 def generate_response_with_workflow_document_attachment(

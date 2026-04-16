@@ -361,6 +361,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/documents/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["documents_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/documents/upload/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["documents_upload_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orgs/agencies/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_agencies_list"];
+        put?: never;
+        post: operations["orgs_agencies_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orgs/agencies/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_agencies_retrieve"];
+        put: operations["orgs_agencies_update"];
+        post?: never;
+        delete: operations["orgs_agencies_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["orgs_agencies_partial_update"];
+        trace?: never;
+    };
+    "/api/orgs/agencies/{id}/departments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_agencies_departments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orgs/departments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_departments_list"];
+        put?: never;
+        post: operations["orgs_departments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orgs/departments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_departments_retrieve"];
+        put: operations["orgs_departments_update"];
+        post?: never;
+        delete: operations["orgs_departments_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["orgs_departments_partial_update"];
+        trace?: never;
+    };
+    "/api/orgs/departments/tree/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orgs_departments_tree_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/schema/": {
         parameters: {
             query?: never;
@@ -435,11 +563,45 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Agency: {
+            /** Format: uuid */
+            readonly id: string;
+            code: string;
+            name: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            readonly parent_name: string;
+            is_active?: boolean;
+            readonly children_count: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        AgencyRequest: {
+            code: string;
+            name: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            is_active?: boolean;
+        };
         AuthToken: {
-            username: string;
-            password: string;
             readonly token: string;
         };
+        AuthTokenRequest: {
+            username: string;
+            password: string;
+        };
+        /**
+         * @description * `UNCLASSIFIED` - Không phân loại
+         *     * `CONFIDENTIAL` - Mật
+         *     * `SECRET` - Tuyệt mật
+         *     * `TOP_SECRET` - Tối mật
+         * @enum {string}
+         */
+        ConfidentialityEnum: "UNCLASSIFIED" | "CONFIDENTIAL" | "SECRET" | "TOP_SECRET";
         Conversation: {
             /** Format: uuid */
             readonly id: string;
@@ -458,17 +620,72 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
+        ConversationCreateRequest: {
+            title?: string;
+        };
         ConversationDetailResponse: {
             conversation: components["schemas"]["Conversation"];
             messages: components["schemas"]["Message"][];
         };
+        Department: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            agency: string;
+            readonly agency_name: string;
+            code: string;
+            name: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            readonly parent_name: string;
+            sort_order?: number;
+            is_active?: boolean;
+            handles_confidential?: boolean;
+            readonly children_count: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /**
+         * @description * `ADMIN` - Phòng Quản lý Hành chính
+         *     * `PLANNING` - Phòng Kế hoạch Tài chính
+         *     * `ENVIRONMENT` - Phòng Tài nguyên Môi trường
+         *     * `GENERAL` - Phòng Tổng hợp
+         *     * `HUMAN_RESOURCES` - Phòng Tổ chức Cán bộ
+         *     * `MANAGEMENT` - Ban Giám đốc
+         *     * `CLERK` - Văn thư
+         * @enum {string}
+         */
+        DepartmentEnum: "ADMIN" | "PLANNING" | "ENVIRONMENT" | "GENERAL" | "HUMAN_RESOURCES" | "MANAGEMENT" | "CLERK";
+        DepartmentRequest: {
+            /** Format: uuid */
+            agency: string;
+            code: string;
+            name: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            sort_order?: number;
+            is_active?: boolean;
+            handles_confidential?: boolean;
+        };
+        /**
+         * @description * `OFFICIAL_LETTER` - Công văn
+         *     * `REPORT` - Báo cáo
+         *     * `DECISION` - Quyết định
+         *     * `OTHER` - Khác
+         * @enum {string}
+         */
+        DocumentTypeEnum: "OFFICIAL_LETTER" | "REPORT" | "DECISION" | "OTHER";
         /** @description Serializer for JWT authentication. */
         JWT: {
             access: string;
             refresh: string;
             user: components["schemas"]["UserDetails"];
         };
-        Login: {
+        LoginRequest: {
             username?: string;
             /** Format: email */
             email?: string;
@@ -481,49 +698,140 @@ export interface components {
             role: components["schemas"]["RoleEnum"];
             content: string;
             readonly order: number;
-            readonly status: components["schemas"]["StatusEnum"];
+            readonly status: components["schemas"]["MessageStatusEnum"];
             readonly error_message: string;
         };
-        MessageChat: {
+        MessageChatRequest: {
             content: string;
         };
-        PasswordChange: {
+        /**
+         * @description * `pending` - Pending
+         *     * `completed` - Completed
+         *     * `failed` - Failed
+         * @enum {string}
+         */
+        MessageStatusEnum: "pending" | "completed" | "failed";
+        PaginatedAgencyList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Agency"][];
+        };
+        PaginatedConversationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Conversation"][];
+        };
+        PaginatedDepartmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Department"][];
+        };
+        PaginatedUserList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["User"][];
+        };
+        PaginatedWorkflowDocumentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["WorkflowDocument"][];
+        };
+        PasswordChangeRequest: {
             new_password1: string;
             new_password2: string;
         };
-        /** @description Serializer for requesting a password reset e-mail. */
-        PasswordReset: {
-            /** Format: email */
-            email: string;
-        };
         /** @description Serializer for confirming a password reset attempt. */
-        PasswordResetConfirm: {
+        PasswordResetConfirmRequest: {
             new_password1: string;
             new_password2: string;
             uid: string;
             token: string;
         };
-        PatchedUser: {
+        /** @description Serializer for requesting a password reset e-mail. */
+        PasswordResetRequest: {
+            /** Format: email */
+            email: string;
+        };
+        PatchedAgencyRequest: {
+            code?: string;
+            name?: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            is_active?: boolean;
+        };
+        PatchedDepartmentRequest: {
+            /** Format: uuid */
+            agency?: string;
+            code?: string;
+            name?: string;
+            short_name?: string;
+            /** Format: uuid */
+            parent?: string | null;
+            sort_order?: number;
+            is_active?: boolean;
+            handles_confidential?: boolean;
+        };
+        /** @description User model w/o password */
+        PatchedUserDetailsRequest: {
+            /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
+            username?: string;
+        };
+        PatchedUserRequest: {
             /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
             username?: string;
             /** Name of User */
             name?: string;
-            /** Format: uri */
-            readonly url?: string;
-        };
-        /** @description User model w/o password */
-        PatchedUserDetails: {
-            /** ID */
-            readonly pk?: number;
-            /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
-            username?: string;
-            /**
-             * Email address
-             * Format: email
-             */
-            readonly email?: string;
-            readonly first_name?: string;
-            readonly last_name?: string;
         };
         RestAuthDetail: {
             readonly detail: string;
@@ -540,18 +848,18 @@ export interface components {
             code?: string;
             id_token?: string;
         };
-        /**
-         * @description * `pending` - Pending
-         *     * `completed` - Completed
-         *     * `failed` - Failed
-         * @enum {string}
-         */
-        StatusEnum: "pending" | "completed" | "failed";
+        SocialLoginRequest: {
+            access_token?: string;
+            code?: string;
+            id_token?: string;
+        };
         TokenRefresh: {
             readonly access: string;
+        };
+        TokenRefreshRequest: {
             refresh: string;
         };
-        TokenVerify: {
+        TokenVerifyRequest: {
             token: string;
         };
         User: {
@@ -576,6 +884,53 @@ export interface components {
             readonly first_name: string;
             readonly last_name: string;
         };
+        /** @description User model w/o password */
+        UserDetailsRequest: {
+            /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
+            username: string;
+        };
+        UserRequest: {
+            /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
+            username: string;
+            /** Name of User */
+            name?: string;
+        };
+        WorkflowDocument: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: date-time */
+            readonly modified: string;
+            title?: string;
+            code?: string;
+            sender?: string;
+            /** Format: date */
+            received_date?: string | null;
+            summary?: string;
+            confidentiality?: components["schemas"]["ConfidentialityEnum"];
+            department?: components["schemas"]["DepartmentEnum"];
+            document_type?: components["schemas"]["DocumentTypeEnum"];
+            status?: components["schemas"]["WorkflowDocumentStatusEnum"];
+            /** Format: double */
+            ai_confidence?: number | null;
+            subject?: string;
+            user: number;
+        };
+        /**
+         * @description * `NEW` - Mới
+         *     * `IN_PROGRESS` - Đang xử lý
+         *     * `PENDING_COORDINATION` - Chờ phối hợp
+         *     * `PENDING_APPROVAL` - Chờ phê duyệt
+         *     * `OVERDUE` - Quá hạn
+         *     * `COMPLETED` - Hoàn tất
+         * @enum {string}
+         */
+        WorkflowDocumentStatusEnum: "NEW" | "IN_PROGRESS" | "PENDING_COORDINATION" | "PENDING_APPROVAL" | "OVERDUE" | "COMPLETED";
+        WorkflowDocumentUploadInputRequest: {
+            /** Format: binary */
+            file: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -594,9 +949,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/x-www-form-urlencoded": components["schemas"]["AuthToken"];
-                "multipart/form-data": components["schemas"]["AuthToken"];
-                "application/json": components["schemas"]["AuthToken"];
+                "application/x-www-form-urlencoded": components["schemas"]["AuthTokenRequest"];
+                "multipart/form-data": components["schemas"]["AuthTokenRequest"];
+                "application/json": components["schemas"]["AuthTokenRequest"];
             };
         };
         responses: {
@@ -619,9 +974,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["SocialLogin"];
-                "application/x-www-form-urlencoded": components["schemas"]["SocialLogin"];
-                "multipart/form-data": components["schemas"]["SocialLogin"];
+                "application/json": components["schemas"]["SocialLoginRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SocialLoginRequest"];
+                "multipart/form-data": components["schemas"]["SocialLoginRequest"];
             };
         };
         responses: {
@@ -644,9 +999,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Login"];
-                "application/x-www-form-urlencoded": components["schemas"]["Login"];
-                "multipart/form-data": components["schemas"]["Login"];
+                "application/json": components["schemas"]["LoginRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LoginRequest"];
+                "multipart/form-data": components["schemas"]["LoginRequest"];
             };
         };
         responses: {
@@ -688,9 +1043,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PasswordChange"];
-                "application/x-www-form-urlencoded": components["schemas"]["PasswordChange"];
-                "multipart/form-data": components["schemas"]["PasswordChange"];
+                "application/json": components["schemas"]["PasswordChangeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PasswordChangeRequest"];
+                "multipart/form-data": components["schemas"]["PasswordChangeRequest"];
             };
         };
         responses: {
@@ -713,9 +1068,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PasswordReset"];
-                "application/x-www-form-urlencoded": components["schemas"]["PasswordReset"];
-                "multipart/form-data": components["schemas"]["PasswordReset"];
+                "application/json": components["schemas"]["PasswordResetRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PasswordResetRequest"];
+                "multipart/form-data": components["schemas"]["PasswordResetRequest"];
             };
         };
         responses: {
@@ -738,9 +1093,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PasswordResetConfirm"];
-                "application/x-www-form-urlencoded": components["schemas"]["PasswordResetConfirm"];
-                "multipart/form-data": components["schemas"]["PasswordResetConfirm"];
+                "application/json": components["schemas"]["PasswordResetConfirmRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PasswordResetConfirmRequest"];
+                "multipart/form-data": components["schemas"]["PasswordResetConfirmRequest"];
             };
         };
         responses: {
@@ -763,9 +1118,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TokenRefresh"];
-                "application/x-www-form-urlencoded": components["schemas"]["TokenRefresh"];
-                "multipart/form-data": components["schemas"]["TokenRefresh"];
+                "application/json": components["schemas"]["TokenRefreshRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TokenRefreshRequest"];
+                "multipart/form-data": components["schemas"]["TokenRefreshRequest"];
             };
         };
         responses: {
@@ -788,19 +1143,18 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TokenVerify"];
-                "application/x-www-form-urlencoded": components["schemas"]["TokenVerify"];
-                "multipart/form-data": components["schemas"]["TokenVerify"];
+                "application/json": components["schemas"]["TokenVerifyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TokenVerifyRequest"];
+                "multipart/form-data": components["schemas"]["TokenVerifyRequest"];
             };
         };
         responses: {
+            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["TokenVerify"];
-                };
+                content?: never;
             };
         };
     };
@@ -832,9 +1186,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDetails"];
-                "application/x-www-form-urlencoded": components["schemas"]["UserDetails"];
-                "multipart/form-data": components["schemas"]["UserDetails"];
+                "application/json": components["schemas"]["UserDetailsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UserDetailsRequest"];
+                "multipart/form-data": components["schemas"]["UserDetailsRequest"];
             };
         };
         responses: {
@@ -857,9 +1211,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedUserDetails"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedUserDetails"];
-                "multipart/form-data": components["schemas"]["PatchedUserDetails"];
+                "application/json": components["schemas"]["PatchedUserDetailsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedUserDetailsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedUserDetailsRequest"];
             };
         };
         responses: {
@@ -875,7 +1229,10 @@ export interface operations {
     };
     chats_conversations_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -887,7 +1244,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Conversation"][];
+                    "application/json": components["schemas"]["PaginatedConversationList"];
                 };
             };
         };
@@ -903,9 +1260,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MessageChat"];
-                "application/x-www-form-urlencoded": components["schemas"]["MessageChat"];
-                "multipart/form-data": components["schemas"]["MessageChat"];
+                "application/json": components["schemas"]["MessageChatRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MessageChatRequest"];
+                "multipart/form-data": components["schemas"]["MessageChatRequest"];
             };
         };
         responses: {
@@ -949,9 +1306,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["ConversationCreate"];
-                "application/x-www-form-urlencoded": components["schemas"]["ConversationCreate"];
-                "multipart/form-data": components["schemas"]["ConversationCreate"];
+                "application/json": components["schemas"]["ConversationCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ConversationCreateRequest"];
+                "multipart/form-data": components["schemas"]["ConversationCreateRequest"];
             };
         };
         responses: {
@@ -967,7 +1324,10 @@ export interface operations {
     };
     chats_conversations_last_7_days_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -979,12 +1339,394 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Conversation"][];
+                    "application/json": components["schemas"]["PaginatedConversationList"];
                 };
             };
         };
     };
     chats_conversations_today_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedConversationList"];
+                };
+            };
+        };
+    };
+    documents_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWorkflowDocumentList"];
+                };
+            };
+        };
+    };
+    documents_upload_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["WorkflowDocumentUploadInputRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WorkflowDocumentUploadInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    orgs_agencies_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAgencyList"];
+                };
+            };
+        };
+    };
+    orgs_agencies_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgencyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AgencyRequest"];
+                "multipart/form-data": components["schemas"]["AgencyRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Agency"];
+                };
+            };
+        };
+    };
+    orgs_agencies_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this agency. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Agency"];
+                };
+            };
+        };
+    };
+    orgs_agencies_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this agency. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgencyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AgencyRequest"];
+                "multipart/form-data": components["schemas"]["AgencyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Agency"];
+                };
+            };
+        };
+    };
+    orgs_agencies_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this agency. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    orgs_agencies_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this agency. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAgencyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAgencyRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAgencyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Agency"];
+                };
+            };
+        };
+    };
+    orgs_agencies_departments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this agency. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Agency"];
+                };
+            };
+        };
+    };
+    orgs_departments_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedDepartmentList"];
+                };
+            };
+        };
+    };
+    orgs_departments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DepartmentRequest"];
+                "multipart/form-data": components["schemas"]["DepartmentRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    orgs_departments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    orgs_departments_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DepartmentRequest"];
+                "multipart/form-data": components["schemas"]["DepartmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    orgs_departments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    orgs_departments_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedDepartmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedDepartmentRequest"];
+                "multipart/form-data": components["schemas"]["PatchedDepartmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    orgs_departments_tree_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -998,7 +1740,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Conversation"][];
+                    "application/json": components["schemas"]["Department"];
                 };
             };
         };
@@ -1038,7 +1780,10 @@ export interface operations {
     };
     users_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1050,7 +1795,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"][];
+                    "application/json": components["schemas"]["PaginatedUserList"];
                 };
             };
         };
@@ -1087,9 +1832,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["User"];
-                "application/x-www-form-urlencoded": components["schemas"]["User"];
-                "multipart/form-data": components["schemas"]["User"];
+                "application/json": components["schemas"]["UserRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UserRequest"];
+                "multipart/form-data": components["schemas"]["UserRequest"];
             };
         };
         responses: {
@@ -1114,9 +1859,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedUser"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedUser"];
-                "multipart/form-data": components["schemas"]["PatchedUser"];
+                "application/json": components["schemas"]["PatchedUserRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedUserRequest"];
+                "multipart/form-data": components["schemas"]["PatchedUserRequest"];
             };
         };
         responses: {

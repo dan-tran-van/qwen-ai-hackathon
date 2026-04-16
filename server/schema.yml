@@ -13,13 +13,13 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -62,13 +62,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialLogin'
+              $ref: '#/components/schemas/SocialLoginRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/SocialLogin'
+              $ref: '#/components/schemas/SocialLoginRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/SocialLogin'
+              $ref: '#/components/schemas/SocialLoginRequest'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
@@ -98,13 +98,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -154,13 +154,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordChangeRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordChangeRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordChangeRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -187,13 +187,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordReset'
+              $ref: '#/components/schemas/PasswordResetRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PasswordReset'
+              $ref: '#/components/schemas/PasswordResetRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordReset'
+              $ref: '#/components/schemas/PasswordResetRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -223,13 +223,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -255,13 +255,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
         required: true
       responses:
         '200':
@@ -282,21 +282,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
         required: true
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenVerify'
-          description: ''
+          description: No response body
   /api/auth/user/:
     get:
       operationId: auth_user_retrieve
@@ -339,13 +335,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDetails'
+              $ref: '#/components/schemas/UserDetailsRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/UserDetails'
+              $ref: '#/components/schemas/UserDetailsRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserDetails'
+              $ref: '#/components/schemas/UserDetailsRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -375,13 +371,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
+              $ref: '#/components/schemas/PatchedUserDetailsRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
+              $ref: '#/components/schemas/PatchedUserDetailsRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
+              $ref: '#/components/schemas/PatchedUserDetailsRequest'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
@@ -397,6 +393,13 @@ paths:
     get:
       operationId: chats_conversations_list
       description: API view to list all conversations for the authenticated user.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - chats
       security:
@@ -408,9 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Conversation'
+                $ref: '#/components/schemas/PaginatedConversationList'
           description: ''
   /api/chats/conversations/{conversation_id}/chat:
     post:
@@ -429,13 +430,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageChat'
+              $ref: '#/components/schemas/MessageChatRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/MessageChat'
+              $ref: '#/components/schemas/MessageChatRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/MessageChat'
+              $ref: '#/components/schemas/MessageChatRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -483,13 +484,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConversationCreate'
+              $ref: '#/components/schemas/ConversationCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/ConversationCreate'
+              $ref: '#/components/schemas/ConversationCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ConversationCreate'
+              $ref: '#/components/schemas/ConversationCreateRequest'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
@@ -506,6 +507,13 @@ paths:
       operationId: chats_conversations_last_7_days_list
       description: API view to list conversations from the last 7 days for the authenticated
         user.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - chats
       security:
@@ -517,15 +525,20 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Conversation'
+                $ref: '#/components/schemas/PaginatedConversationList'
           description: ''
   /api/chats/conversations/today/:
     get:
       operationId: chats_conversations_today_list
       description: API view to list conversations from today for the authenticated
         user.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - chats
       security:
@@ -537,9 +550,419 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Conversation'
+                $ref: '#/components/schemas/PaginatedConversationList'
+          description: ''
+  /api/documents/:
+    get:
+      operationId: documents_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - documents
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkflowDocumentList'
+          description: ''
+  /api/documents/upload/:
+    post:
+      operationId: documents_upload_create
+      tags:
+      - documents
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkflowDocumentUploadInputRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkflowDocumentUploadInputRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                message: Document uploaded successfully
+          description: ''
+  /api/orgs/agencies/:
+    get:
+      operationId: orgs_agencies_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAgencyList'
+          description: ''
+    post:
+      operationId: orgs_agencies_create
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+          description: ''
+  /api/orgs/agencies/{id}/:
+    get:
+      operationId: orgs_agencies_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this agency.
+        required: true
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+          description: ''
+    put:
+      operationId: orgs_agencies_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this agency.
+        required: true
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgencyRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+          description: ''
+    patch:
+      operationId: orgs_agencies_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this agency.
+        required: true
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAgencyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAgencyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAgencyRequest'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+          description: ''
+    delete:
+      operationId: orgs_agencies_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this agency.
+        required: true
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/orgs/agencies/{id}/departments/:
+    get:
+      operationId: orgs_agencies_departments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this agency.
+        required: true
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+          description: ''
+  /api/orgs/departments/:
+    get:
+      operationId: orgs_departments_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDepartmentList'
+          description: ''
+    post:
+      operationId: orgs_departments_create
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /api/orgs/departments/{id}/:
+    get:
+      operationId: orgs_departments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this department.
+        required: true
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    put:
+      operationId: orgs_departments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this department.
+        required: true
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    patch:
+      operationId: orgs_departments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this department.
+        required: true
+      tags:
+      - orgs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartmentRequest'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    delete:
+      operationId: orgs_departments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this department.
+        required: true
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/orgs/departments/tree/:
+    get:
+      operationId: orgs_departments_tree_retrieve
+      tags:
+      - orgs
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
           description: ''
   /api/schema/:
     get:
@@ -691,6 +1114,13 @@ paths:
   /api/users/:
     get:
       operationId: users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - users
       security:
@@ -702,9 +1132,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUserList'
           description: ''
   /api/users/{username}/:
     get:
@@ -746,13 +1174,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -781,13 +1209,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
@@ -817,22 +1245,107 @@ paths:
           description: ''
 components:
   schemas:
+    Agency:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 255
+        short_name:
+          type: string
+          maxLength: 100
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        parent_name:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+        children_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - children_count
+      - code
+      - created_at
+      - id
+      - name
+      - parent_name
+      - updated_at
+    AgencyRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        short_name:
+          type: string
+          maxLength: 100
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        is_active:
+          type: boolean
+      required:
+      - code
+      - name
     AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+          readOnly: true
+      required:
+      - token
+    AuthTokenRequest:
       type: object
       properties:
         username:
           type: string
           writeOnly: true
+          minLength: 1
         password:
           type: string
           writeOnly: true
-        token:
-          type: string
-          readOnly: true
+          minLength: 1
       required:
       - password
-      - token
       - username
+    ConfidentialityEnum:
+      enum:
+      - UNCLASSIFIED
+      - CONFIDENTIAL
+      - SECRET
+      - TOP_SECRET
+      type: string
+      description: |-
+        * `UNCLASSIFIED` - Không phân loại
+        * `CONFIDENTIAL` - Mật
+        * `SECRET` - Tuyệt mật
+        * `TOP_SECRET` - Tối mật
     Conversation:
       type: object
       properties:
@@ -879,6 +1392,12 @@ components:
       - created_at
       - id
       - updated_at
+    ConversationCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
     ConversationDetailResponse:
       type: object
       properties:
@@ -891,6 +1410,127 @@ components:
       required:
       - conversation
       - messages
+    Department:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        agency:
+          type: string
+          format: uuid
+        agency_name:
+          type: string
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 255
+        short_name:
+          type: string
+          maxLength: 100
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        parent_name:
+          type: string
+          readOnly: true
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_active:
+          type: boolean
+        handles_confidential:
+          type: boolean
+        children_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - agency
+      - agency_name
+      - children_count
+      - code
+      - created_at
+      - id
+      - name
+      - parent_name
+      - updated_at
+    DepartmentEnum:
+      enum:
+      - ADMIN
+      - PLANNING
+      - ENVIRONMENT
+      - GENERAL
+      - HUMAN_RESOURCES
+      - MANAGEMENT
+      - CLERK
+      type: string
+      description: |-
+        * `ADMIN` - Phòng Quản lý Hành chính
+        * `PLANNING` - Phòng Kế hoạch Tài chính
+        * `ENVIRONMENT` - Phòng Tài nguyên Môi trường
+        * `GENERAL` - Phòng Tổng hợp
+        * `HUMAN_RESOURCES` - Phòng Tổ chức Cán bộ
+        * `MANAGEMENT` - Ban Giám đốc
+        * `CLERK` - Văn thư
+    DepartmentRequest:
+      type: object
+      properties:
+        agency:
+          type: string
+          format: uuid
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        short_name:
+          type: string
+          maxLength: 100
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_active:
+          type: boolean
+        handles_confidential:
+          type: boolean
+      required:
+      - agency
+      - code
+      - name
+    DocumentTypeEnum:
+      enum:
+      - OFFICIAL_LETTER
+      - REPORT
+      - DECISION
+      - OTHER
+      type: string
+      description: |-
+        * `OFFICIAL_LETTER` - Công văn
+        * `REPORT` - Báo cáo
+        * `DECISION` - Quyết định
+        * `OTHER` - Khác
     JWT:
       type: object
       description: Serializer for JWT authentication.
@@ -905,7 +1545,7 @@ components:
       - access
       - refresh
       - user
-    Login:
+    LoginRequest:
       type: object
       properties:
         username:
@@ -915,6 +1555,7 @@ components:
           format: email
         password:
           type: string
+          minLength: 1
       required:
       - password
     Message:
@@ -936,7 +1577,7 @@ components:
           readOnly: true
         status:
           allOf:
-          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/MessageStatusEnum'
           readOnly: true
         error_message:
           type: string
@@ -949,58 +1590,252 @@ components:
       - order
       - role
       - status
-    MessageChat:
+    MessageChatRequest:
       type: object
       properties:
         content:
           type: string
+          minLength: 1
       required:
       - content
-    PasswordChange:
+    MessageStatusEnum:
+      enum:
+      - pending
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `failed` - Failed
+    PaginatedAgencyList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agency'
+    PaginatedConversationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Conversation'
+    PaginatedDepartmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PaginatedWorkflowDocumentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowDocument'
+    PasswordChangeRequest:
       type: object
       properties:
         new_password1:
           type: string
+          minLength: 1
           maxLength: 128
         new_password2:
           type: string
+          minLength: 1
           maxLength: 128
       required:
       - new_password1
       - new_password2
-    PasswordReset:
+    PasswordResetConfirmRequest:
+      type: object
+      description: Serializer for confirming a password reset attempt.
+      properties:
+        new_password1:
+          type: string
+          minLength: 1
+          maxLength: 128
+        new_password2:
+          type: string
+          minLength: 1
+          maxLength: 128
+        uid:
+          type: string
+          minLength: 1
+        token:
+          type: string
+          minLength: 1
+      required:
+      - new_password1
+      - new_password2
+      - token
+      - uid
+    PasswordResetRequest:
       type: object
       description: Serializer for requesting a password reset e-mail.
       properties:
         email:
           type: string
           format: email
+          minLength: 1
       required:
       - email
-    PasswordResetConfirm:
+    PatchedAgencyRequest:
       type: object
-      description: Serializer for confirming a password reset attempt.
       properties:
-        new_password1:
+        code:
           type: string
-          maxLength: 128
-        new_password2:
+          minLength: 1
+          maxLength: 50
+        name:
           type: string
-          maxLength: 128
-        uid:
+          minLength: 1
+          maxLength: 255
+        short_name:
           type: string
-        token:
+          maxLength: 100
+        parent:
           type: string
-      required:
-      - new_password1
-      - new_password2
-      - token
-      - uid
-    PatchedUser:
+          format: uuid
+          nullable: true
+        is_active:
+          type: boolean
+    PatchedDepartmentRequest:
+      type: object
+      properties:
+        agency:
+          type: string
+          format: uuid
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        short_name:
+          type: string
+          maxLength: 100
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_active:
+          type: boolean
+        handles_confidential:
+          type: boolean
+    PatchedUserDetailsRequest:
+      type: object
+      description: User model w/o password
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+    PatchedUserRequest:
       type: object
       properties:
         username:
           type: string
+          minLength: 1
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           pattern: ^[\w.@+-]+$
@@ -1009,35 +1844,6 @@ components:
           type: string
           title: Name of User
           maxLength: 255
-        url:
-          type: string
-          format: uri
-          readOnly: true
-    PatchedUserDetails:
-      type: object
-      description: User model w/o password
-      properties:
-        pk:
-          type: integer
-          readOnly: true
-          title: ID
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          readOnly: true
-          title: Email address
-        first_name:
-          type: string
-          readOnly: true
-        last_name:
-          type: string
-          readOnly: true
     RestAuthDetail:
       type: object
       properties:
@@ -1065,33 +1871,39 @@ components:
           type: string
         id_token:
           type: string
-    StatusEnum:
-      enum:
-      - pending
-      - completed
-      - failed
-      type: string
-      description: |-
-        * `pending` - Pending
-        * `completed` - Completed
-        * `failed` - Failed
+    SocialLoginRequest:
+      type: object
+      properties:
+        access_token:
+          type: string
+        code:
+          type: string
+        id_token:
+          type: string
     TokenRefresh:
       type: object
       properties:
         access:
           type: string
           readOnly: true
-        refresh:
-          type: string
       required:
       - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
       - refresh
-    TokenVerify:
+    TokenVerifyRequest:
       type: object
       properties:
         token:
           type: string
           writeOnly: true
+          minLength: 1
       required:
       - token
     User:
@@ -1145,6 +1957,111 @@ components:
       - last_name
       - pk
       - username
+    UserDetailsRequest:
+      type: object
+      description: User model w/o password
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+      - username
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+      required:
+      - username
+    WorkflowDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        code:
+          type: string
+          maxLength: 100
+        sender:
+          type: string
+          maxLength: 255
+        received_date:
+          type: string
+          format: date
+          nullable: true
+        summary:
+          type: string
+        confidentiality:
+          $ref: '#/components/schemas/ConfidentialityEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        document_type:
+          $ref: '#/components/schemas/DocumentTypeEnum'
+        status:
+          $ref: '#/components/schemas/WorkflowDocumentStatusEnum'
+        ai_confidence:
+          type: number
+          format: double
+          nullable: true
+        subject:
+          type: string
+          maxLength: 255
+        user:
+          type: integer
+      required:
+      - created
+      - id
+      - modified
+      - user
+    WorkflowDocumentStatusEnum:
+      enum:
+      - NEW
+      - IN_PROGRESS
+      - PENDING_COORDINATION
+      - PENDING_APPROVAL
+      - OVERDUE
+      - COMPLETED
+      type: string
+      description: |-
+        * `NEW` - Mới
+        * `IN_PROGRESS` - Đang xử lý
+        * `PENDING_COORDINATION` - Chờ phối hợp
+        * `PENDING_APPROVAL` - Chờ phê duyệt
+        * `OVERDUE` - Quá hạn
+        * `COMPLETED` - Hoàn tất
+    WorkflowDocumentUploadInputRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+      required:
+      - file
   securitySchemes:
     cookieAuth:
       type: apiKey

@@ -62,6 +62,7 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
             new_workflow_document.status = document_ai_analysis.status
             new_workflow_document.ai_confidence = document_ai_analysis.ai_confidence
             new_workflow_document.subject = document_ai_analysis.subject
+            new_workflow_document.deadline = document_ai_analysis.deadline
             new_workflow_document.save()
             return Response(
                 {

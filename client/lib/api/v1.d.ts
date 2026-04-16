@@ -691,10 +691,13 @@ export interface components {
          * @description * `OFFICIAL_LETTER` - Công văn
          *     * `REPORT` - Báo cáo
          *     * `DECISION` - Quyết định
+         *     * `DOCUMENT` - Văn bản
+         *     * `FORM` - Phiếu trình
+         *     * `ANNOUNCEMENT` - Thông báo
          *     * `OTHER` - Khác
          * @enum {string}
          */
-        DocumentTypeEnum: "OFFICIAL_LETTER" | "REPORT" | "DECISION" | "OTHER";
+        DocumentTypeEnum: "OFFICIAL_LETTER" | "REPORT" | "DECISION" | "DOCUMENT" | "FORM" | "ANNOUNCEMENT" | "OTHER";
         /** @description Serializer for JWT authentication. */
         JWT: {
             access: string;
@@ -931,6 +934,8 @@ export interface components {
             /** Format: double */
             ai_confidence?: number | null;
             subject?: string;
+            /** Format: date */
+            deadline?: string | null;
             user: number;
         };
         /**

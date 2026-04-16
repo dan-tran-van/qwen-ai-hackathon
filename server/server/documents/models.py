@@ -1,4 +1,3 @@
-from hashlib import file_digest
 import uuid
 
 from django.conf import settings
@@ -17,6 +16,9 @@ class DocumentType(models.TextChoices):
     OFFICIAL_LETTER = "OFFICIAL_LETTER", "Công văn"
     REPORT = "REPORT", "Báo cáo"
     DECISION = "DECISION", "Quyết định"
+    DOCUMENT = "DOCUMENT", "Văn bản"
+    FORM = "FORM", "Phiếu trình"
+    ANNOUNCEMENT = "ANNOUNCEMENT", "Thông báo"
     OTHER = "OTHER", "Khác"
 
 
@@ -73,6 +75,7 @@ class WorkflowDocument(TimeStampedModel):
     )
     ai_confidence = models.FloatField(null=True, blank=True)
     subject = models.CharField(max_length=255, blank=True)
+    deadline = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f"WorkflowDocument {self.id}"

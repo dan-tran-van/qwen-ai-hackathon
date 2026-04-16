@@ -23,6 +23,9 @@ class DocumentType(StrEnum):
     OFFICIAL_LETTER = "OFFICIAL_LETTER"
     REPORT = "REPORT"
     DECISION = "DECISION"
+    DOCUMENT = "DOCUMENT"
+    FORM = "FORM"
+    ANNOUNCEMENT = "ANNOUNCEMENT"
     OTHER = "OTHER"
 
 
@@ -57,6 +60,7 @@ class WorkflowDocument(BaseModel):
     status: DocumentStatus
     ai_confidence: float
     subject: str
+    deadline: str
 
 
 def get_openai_client() -> OpenAI:
@@ -114,7 +118,7 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                             "Use these enums exactly:\n"
                             "confidentiality: UNCLASSIFIED, CONFIDENTIAL, SECRET, TOP_SECRET\n"
                             "department: ADMIN, PLANNING, ENVIRONMENT, GENERAL, HUMAN_RESOURCES, MANAGEMENT, CLERK\n"
-                            "document_type: OFFICIAL_LETTER, REPORT, DECISION, OTHER\n"
+                            "document_type: OFFICIAL_LETTER, REPORT, DECISION, DOCUMENT, FORM, ANNOUNCEMENT, OTHER\n"
                             "status: NEW, IN_PROGRESS, PENDING_COORDINATION, PENDING_APPROVAL, OVERDUE, COMPLETED"
                         ),
                     },
@@ -157,7 +161,15 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                         },
                         "document_type": {
                             "type": "string",
-                            "enum": ["OFFICIAL_LETTER", "REPORT", "DECISION", "OTHER"],
+                            "enum": [
+                                "OFFICIAL_LETTER",
+                                "REPORT",
+                                "DECISION",
+                                "DOCUMENT",
+                                "FORM",
+                                "ANNOUNCEMENT",
+                                "OTHER",
+                            ],
                         },
                         "status": {
                             "type": "string",
@@ -185,6 +197,7 @@ def generate_workflow_document_ai_analysis(file_id: str) -> WorkflowDocument:
                         "status",
                         "ai_confidence",
                         "subject",
+                        "deadline",
                     ],
                 },
             }

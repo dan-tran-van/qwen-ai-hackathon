@@ -640,6 +640,73 @@ paths:
               schema:
                 $ref: '#/components/schemas/WorkflowDocument'
           description: ''
+  /api/documents/{id}/update/:
+    put:
+      operationId: documents_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowDocumentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkflowDocumentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkflowDocumentRequest'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDocument'
+          description: ''
+    patch:
+      operationId: documents_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowDocumentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowDocumentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowDocumentRequest'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDocument'
+          description: ''
   /api/documents/upload/:
     post:
       operationId: documents_upload_create
@@ -2129,6 +2196,66 @@ components:
           type: string
           title: Name of User
           maxLength: 255
+    PatchedWorkflowDocumentRequest:
+      type: object
+      properties:
+        suggested_reviewer:
+          type: string
+          nullable: true
+          minLength: 1
+        suggested_dept:
+          type: string
+          nullable: true
+          minLength: 1
+        entities:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        risk_flags:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        related_docs:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        title:
+          type: string
+          maxLength: 255
+        code:
+          type: string
+          maxLength: 100
+        sender:
+          type: string
+          maxLength: 255
+        received_date:
+          type: string
+          format: date
+          nullable: true
+        summary:
+          type: string
+        confidentiality:
+          $ref: '#/components/schemas/ConfidentialityEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        document_type:
+          $ref: '#/components/schemas/DocumentTypeEnum'
+        status:
+          $ref: '#/components/schemas/WorkflowDocumentStatusEnum'
+        ai_confidence:
+          type: number
+          format: double
+          nullable: true
+        subject:
+          type: string
+          maxLength: 255
+        deadline:
+          type: string
+          format: date
+          nullable: true
     PatchedWorkflowStepRequest:
       type: object
       properties:
@@ -2382,14 +2509,11 @@ components:
           type: string
           format: date
           nullable: true
-        user:
-          type: integer
       required:
       - attachments
       - created
       - id
       - modified
-      - user
     WorkflowDocumentAttachment:
       type: object
       properties:
@@ -2431,6 +2555,84 @@ components:
       - file_size_mb
       - id
       - modified
+    WorkflowDocumentAttachmentRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        upload_file_id:
+          type: string
+          maxLength: 255
+        file_name:
+          type: string
+          maxLength: 255
+        document:
+          type: string
+          format: uuid
+      required:
+      - document
+      - file
+    WorkflowDocumentRequest:
+      type: object
+      properties:
+        suggested_reviewer:
+          type: string
+          nullable: true
+          minLength: 1
+        suggested_dept:
+          type: string
+          nullable: true
+          minLength: 1
+        entities:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        risk_flags:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        related_docs:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        title:
+          type: string
+          maxLength: 255
+        code:
+          type: string
+          maxLength: 100
+        sender:
+          type: string
+          maxLength: 255
+        received_date:
+          type: string
+          format: date
+          nullable: true
+        summary:
+          type: string
+        confidentiality:
+          $ref: '#/components/schemas/ConfidentialityEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        document_type:
+          $ref: '#/components/schemas/DocumentTypeEnum'
+        status:
+          $ref: '#/components/schemas/WorkflowDocumentStatusEnum'
+        ai_confidence:
+          type: number
+          format: double
+          nullable: true
+        subject:
+          type: string
+          maxLength: 255
+        deadline:
+          type: string
+          format: date
+          nullable: true
     WorkflowDocumentStatusEnum:
       enum:
       - NEW

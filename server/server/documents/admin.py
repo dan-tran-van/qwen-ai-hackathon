@@ -29,6 +29,6 @@ class WorkflowDocumentAttachmentAdmin(admin.ModelAdmin):
 
 @admin.register(WorkflowDocumentAIDraftResponse)
 class WorkflowDocumentAIDraftResponseAdmin(admin.ModelAdmin):
-    list_display = ("id", "document", "response_text", "confidence_score")
-    search_fields = ("document__title", "response_text")
-    list_filter = ("created_at",)
+    list_display = ("id", "document", "content")
+    search_fields = ("document__title", "content")
+    list_filter = ("created",)

@@ -24,11 +24,11 @@ urlpatterns = [
         WorkflowDocumentDetailView.as_view(),
         name="workflow_document_detail",
     ),
-    path(
-        "<uuid:pk>/generate_response/",
-        WorkflowDocumentResponseGenerationView.as_view(),
-        name="workflow_document_generate_response",
-    ),
+    # path(
+    #     "<uuid:pk>/generate_response/",
+    #     WorkflowDocumentResponseGenerationView.as_view(),
+    #     name="workflow_document_generate_response",
+    # ),
     path(
         "<uuid:pk>/update/",
         WorkflowDocumentUpdateView.as_view(),

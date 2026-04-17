@@ -418,6 +418,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/documents/{id}/update/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["documents_update_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["documents_update_partial_update"];
+        trace?: never;
+    };
     "/api/documents/upload/": {
         parameters: {
             query?: never;
@@ -941,6 +957,28 @@ export interface components {
             /** Name of User */
             name?: string;
         };
+        PatchedWorkflowDocumentRequest: {
+            suggested_reviewer?: string | null;
+            suggested_dept?: string | null;
+            entities?: string[];
+            risk_flags?: string[];
+            related_docs?: string[];
+            title?: string;
+            code?: string;
+            sender?: string;
+            /** Format: date */
+            received_date?: string | null;
+            summary?: string;
+            confidentiality?: components["schemas"]["ConfidentialityEnum"];
+            department?: components["schemas"]["DepartmentEnum"];
+            document_type?: components["schemas"]["DocumentTypeEnum"];
+            status?: components["schemas"]["WorkflowDocumentStatusEnum"];
+            /** Format: double */
+            ai_confidence?: number | null;
+            subject?: string;
+            /** Format: date */
+            deadline?: string | null;
+        };
         PatchedWorkflowStepRequest: {
             stage?: components["schemas"]["StageEnum"];
             department?: components["schemas"]["DepartmentEnum"];
@@ -1052,7 +1090,6 @@ export interface components {
             subject?: string;
             /** Format: date */
             deadline?: string | null;
-            user: number;
         };
         WorkflowDocumentAttachment: {
             /** Format: uuid */
@@ -1069,6 +1106,36 @@ export interface components {
             file_name?: string;
             /** Format: uuid */
             document: string;
+        };
+        WorkflowDocumentAttachmentRequest: {
+            /** Format: binary */
+            file: string;
+            upload_file_id?: string;
+            file_name?: string;
+            /** Format: uuid */
+            document: string;
+        };
+        WorkflowDocumentRequest: {
+            suggested_reviewer?: string | null;
+            suggested_dept?: string | null;
+            entities?: string[];
+            risk_flags?: string[];
+            related_docs?: string[];
+            title?: string;
+            code?: string;
+            sender?: string;
+            /** Format: date */
+            received_date?: string | null;
+            summary?: string;
+            confidentiality?: components["schemas"]["ConfidentialityEnum"];
+            department?: components["schemas"]["DepartmentEnum"];
+            document_type?: components["schemas"]["DocumentTypeEnum"];
+            status?: components["schemas"]["WorkflowDocumentStatusEnum"];
+            /** Format: double */
+            ai_confidence?: number | null;
+            subject?: string;
+            /** Format: date */
+            deadline?: string | null;
         };
         /**
          * @description * `NEW` - Mới
@@ -1609,6 +1676,60 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowDocument"];
+                };
+            };
+        };
+    };
+    documents_update_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["WorkflowDocumentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WorkflowDocumentRequest"];
+                "multipart/form-data": components["schemas"]["WorkflowDocumentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowDocument"];
+                };
+            };
+        };
+    };
+    documents_update_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedWorkflowDocumentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkflowDocumentRequest"];
+                "multipart/form-data": components["schemas"]["PatchedWorkflowDocumentRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {

@@ -198,6 +198,7 @@ def generate_workflow_document_ai_analysis(
                             "department: ADMIN, PLANNING, ENVIRONMENT, GENERAL, HUMAN_RESOURCES, MANAGEMENT, CLERK\n"
                             "document_type: OFFICIAL_LETTER, REPORT, DECISION, DOCUMENT, FORM, ANNOUNCEMENT, OTHER\n"
                             "status: NEW, IN_PROGRESS, PENDING_COORDINATION, PENDING_APPROVAL, OVERDUE, COMPLETED"
+                            "The response should be in Vietnamese for summary and sender fields, but other fields should be in English. "
                         ),
                     },
                     attachment_part,
@@ -302,3 +303,51 @@ def generate_response_with_workflow_document_attachment(
 ) -> WorkflowDocument:
     uploaded = upload_workflow_document_attachment_to_openai(attachment)
     return generate_workflow_document_ai_analysis(uploaded)
+
+
+def generate_workflow_response_from_workflow_document(
+    workflow_document: WorkflowDocument,
+    attachment_id: str | None = None,
+) -> str:
+    client = get_openai_client()
+
+    response = client.responses.create(
+        model="gpt-5",
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            "You are a helpful assistant for government document processing. "
+                            "Based on the following government document information, "
+                            "draft the final response to issue to the relevant citizen/stake holder. "
+                        ),
+                    },
+                    {
+                        "type": "input_text",
+                        "text": workflow_document.model_dump_json(),
+                    },
+                ],
+            }
+        ],
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "workflow_response",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "next_stage": {"type": "string"},
+                        "assignee": {"type": ["string", "null"]},
+                        "notes": {"type": ["string", "null"]},
+                    },
+                    "required": ["next_stage", "assignee", "notes"],
+                },
+            }
+        },
+    )
+
+    return response.output_text

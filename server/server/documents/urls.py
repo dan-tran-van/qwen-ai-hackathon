@@ -1,6 +1,10 @@
 from django.urls import path
 
-from server.documents.views import WorkflowDocumentDetailView
+from server.documents.views import (
+    WorkflowDocumentDetailView,
+    WorkflowDocumentResponseGenerationView,
+    WorkflowDocumentUpdateView,
+)
 from server.documents.views import WorkflowDocumentListView
 from server.documents.views import WorkflowDocumentUploadView
 
@@ -19,5 +23,15 @@ urlpatterns = [
         "<uuid:pk>/",
         WorkflowDocumentDetailView.as_view(),
         name="workflow_document_detail",
+    ),
+    path(
+        "<uuid:pk>/generate_response/",
+        WorkflowDocumentResponseGenerationView.as_view(),  # noqa: F821
+        name="workflow_document_generate_response",
+    ),
+    path(
+        "<uuid:pk>/update/",
+        WorkflowDocumentUpdateView.as_view(),
+        name="workflow_document_update",
     ),
 ]

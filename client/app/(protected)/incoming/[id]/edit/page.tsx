@@ -80,7 +80,7 @@ export default function WorkflowEdit() {
                 {doc?.code} – {doc?.title}
               </p>
             </div>
-            <button
+            {/* <button
               onClick={() => setShowAiSuggestions(!showAiSuggestions)}
               className={`h-9 px-4 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors ${
                 showAiSuggestions
@@ -90,7 +90,7 @@ export default function WorkflowEdit() {
             >
               <Sparkles className="h-4 w-4" />
               {showAiSuggestions ? "Ẩn gợi ý AI" : "AI phân tích lại"}
-            </button>
+            </button> */}
           </div>
 
           <div className="flex flex-col lg:flex-row gap-5">

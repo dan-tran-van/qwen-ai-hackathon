@@ -20,3 +20,9 @@ class WorkflowStepListByDocumentIdView(generics.ListAPIView):
     def get_queryset(self):
         document_id = self.kwargs["document_id"]
         return WorkflowStep.objects.filter(document_id=document_id).order_by("date")
+
+
+class WorkflowStepTransitionView(generics.UpdateAPIView):
+    queryset = WorkflowStep.objects.all()
+    serializer_class = WorkflowStepSerializer
+    permission_classes = [IsAuthenticated]

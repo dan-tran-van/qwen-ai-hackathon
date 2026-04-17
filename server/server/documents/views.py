@@ -15,7 +15,8 @@ from server.documents.serializers import WorkflowDocumentSerializer
 from server.documents.serializers import WorkflowDocumentUploadInputSerializer
 from server.documents.services import generate_workflow_document_ai_analysis
 from server.documents.services import upload_workflow_document_attachment_to_openai
-from server.workflows.models import WorkflowStage, WorkflowStep
+from server.workflows.models import WorkflowStage
+from server.workflows.models import WorkflowStep
 
 # Create your views here.
 
@@ -148,3 +149,22 @@ class WorkflowDocumentDetailView(generics.RetrieveAPIView):
     queryset = WorkflowDocument.objects.all()
     serializer_class = WorkflowDocumentSerializer
     permission_classes = [IsAuthenticated]
+
+
+class WorkflowDocumentUpdateView(generics.UpdateAPIView):
+    queryset = WorkflowDocument.objects.all()
+    serializer_class = WorkflowDocumentSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "pk"
+
+
+class WorkflowDocumentResponseGenerationView(generics.GenericAPIView):
+    queryset = WorkflowDocument.objects.all()
+    serializer_class = WorkflowDocumentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        document = self.get_object()
+        # Implement your response generation logic here using the document details
+        generated_response = f"Generated response for document: {document.title}"
+        return Response({"generated_response": generated_response})

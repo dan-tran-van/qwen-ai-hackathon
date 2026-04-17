@@ -47,11 +47,11 @@ interface ChatMessage {
   citations?: string[];
 }
 
-const defaultSuggestions = [
-  "Hướng dẫn quy trình xử lý hồ sơ",
-  "So sánh hai văn bản pháp quy",
-  "Phân tích rủi ro văn bản",
-];
+// const defaultSuggestions = [
+//   "Hướng dẫn quy trình xử lý hồ sơ",
+//   "So sánh hai văn bản pháp quy",
+//   "Phân tích rủi ro văn bản",
+// ];
 
 export default function AIChat() {
   const params = useParams<{ id: string }>();
@@ -392,7 +392,7 @@ export default function AIChat() {
           </div>
         </div>
 
-        {/* Suggestions */}
+        {/* Suggestions
         {messages.length <= 2 && (
           <div className="px-4 sm:px-6 pb-2">
             <div className="max-w-[700px] mx-auto flex flex-wrap gap-2">
@@ -407,7 +407,7 @@ export default function AIChat() {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Composer */}
         <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">

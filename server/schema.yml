@@ -640,6 +640,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/WorkflowDocument'
           description: ''
+  /api/documents/{id}/generate_response/:
+    post:
+      operationId: documents_generate_response_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - documents
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
   /api/documents/{id}/update/:
     put:
       operationId: documents_update_update

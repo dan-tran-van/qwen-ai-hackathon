@@ -7,11 +7,15 @@ from typing import TYPE_CHECKING
 from typing import Any
 from typing import Literal
 
+from django.forms import model_to_dict
 from openai import OpenAI
 from pydantic import BaseModel
 from pydantic import Field
 from server.documents.models import WorkflowDocument as WorkflowDocumentModel
-from server.documents.serializers import WorkflowDocumentSerializer
+from server.documents.serializers import (
+    WorkflowDocumentAIDraftInputSerializer,
+    WorkflowDocumentSerializer,
+)
 
 if TYPE_CHECKING:
     from server.documents.models import WorkflowDocumentAttachment
@@ -312,8 +316,7 @@ def generate_workflow_response_from_workflow_document(
     attachment_id: str | None = None,
 ) -> str:
     client = get_openai_client()
-    serializer = WorkflowDocumentSerializer(workflow_document)
-    workflow_document_dict = serializer.data
+    json_data = WorkflowDocumentAIDraftInputSerializer(workflow_document).data
 
     response = client.responses.create(
         model="gpt-5",
@@ -334,7 +337,7 @@ def generate_workflow_response_from_workflow_document(
                     },
                     {
                         "type": "input_text",
-                        "text": workflow_document_dict,
+                        "text": json_data.__str__(),
                     },
                 ],
             }

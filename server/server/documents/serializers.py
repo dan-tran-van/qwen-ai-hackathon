@@ -58,6 +58,27 @@ class WorkflowDocumentSerializer(serializers.ModelSerializer):
         return data
 
 
+class WorkflowDocumentAIDraftInputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkflowDocument
+        fields = (
+            "title",
+            "code",
+            "sender",
+            "received_date",
+            "confidentiality",
+            "summary",
+            "department",
+            "document_type",
+            "status",
+            "ai_confidence",
+            "subject",
+            "deadline",
+            "subject",
+            "deadline",
+        )
+
+
 class WorkflowDocumentUploadInputSerializer(serializers.Serializer):
     file = serializers.FileField()
 

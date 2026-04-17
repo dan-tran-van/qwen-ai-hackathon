@@ -102,6 +102,7 @@ LOCAL_APPS = [
     "server.chats.apps.ChatsConfig",
     "server.orgs.apps.OrgsConfig",
     "server.documents.apps.DocumentsConfig",
+    "server.workflows.apps.WorkflowsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

@@ -51,6 +51,7 @@ urlpatterns += [
     path("api/chats/", include("server.chats.urls"), name="chats-api"),
     path("api/orgs/", include("server.orgs.urls")),
     path("api/documents/", include("server.documents.urls")),
+    path("api/workflows/", include("server.workflows.urls")),
 ]
 
 if settings.DEBUG:

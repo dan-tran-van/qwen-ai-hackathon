@@ -311,8 +311,8 @@ export const statusColors: Record<DocumentStatus, string> = {
 };
 
 export const confidentialityColors: Record<Confidentiality, string> = {
-  Thường: "bg-muted text-muted-foreground",
-  Mật: "bg-warning/10 text-warning",
-  "Tối mật": "bg-destructive/10 text-destructive",
-  "Tuyệt mật": "bg-destructive/20 text-destructive",
+  UNCLASSIFIED: "bg-muted text-muted-foreground",
+  CONFIDENTIAL: "bg-warning/10 text-warning",
+  SECRET: "bg-destructive/10 text-destructive",
+  TOP_SECRET: "bg-destructive/20 text-destructive",
 };

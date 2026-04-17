@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { $api } from "@/lib/api/api";
 import { extractPageFromNext } from "@/lib/utils";
+import { DOCUMENT_TYPE_LABEL } from "./constants";
 
 export default function IncomingDocuments() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -165,7 +166,7 @@ export default function IncomingDocuments() {
                         {doc.received_date}
                       </td>
                       <td className="px-5 py-3 text-sm text-muted-foreground">
-                        {doc.document_type}
+                        {DOCUMENT_TYPE_LABEL[doc.document_type]}
                       </td>
                       <td className="px-5 py-3 text-xs text-muted-foreground">
                         {doc.department}

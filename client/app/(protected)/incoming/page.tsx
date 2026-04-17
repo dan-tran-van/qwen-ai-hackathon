@@ -200,7 +200,7 @@ export default function IncomingDocuments() {
                 className="bg-card rounded-xl border border-border/40 p-4 hover:shadow-card transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/document/${doc.id}`} className="flex-1 min-w-0">
+                  <Link href={`/incoming/${doc.id}`} className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       <span className="text-xs font-mono text-primary">
                         {doc.code}

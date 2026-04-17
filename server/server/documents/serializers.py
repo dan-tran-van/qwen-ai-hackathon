@@ -1,6 +1,21 @@
 from rest_framework import serializers
 
 from server.documents.models import WorkflowDocument
+from server.documents.models import WorkflowDocumentAttachment
+
+
+class WorkflowDocumentAttachmentSerializer(serializers.ModelSerializer):
+    file_size_mb = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkflowDocumentAttachment
+        fields = "__all__"
+
+    def get_file_size_mb(self, obj):
+        if obj.file:
+            # Round to 2 decimal places
+            return round(obj.file.size / (1024 * 1024), 2)
+        return 0
 
 
 class WorkflowDocumentSerializer(serializers.ModelSerializer):
@@ -9,20 +24,15 @@ class WorkflowDocumentSerializer(serializers.ModelSerializer):
     suggested_dept = serializers.CharField(allow_null=True, required=False)
 
     entities = serializers.ListField(
-        child=serializers.CharField(),
-        default=list,
-        required=False
+        child=serializers.CharField(), default=list, required=False
     )
     risk_flags = serializers.ListField(
-        child=serializers.CharField(),
-        default=list,
-        required=False
+        child=serializers.CharField(), default=list, required=False
     )
     related_docs = serializers.ListField(
-        child=serializers.CharField(),
-        default=list,
-        required=False
+        child=serializers.CharField(), default=list, required=False
     )
+    attachments = WorkflowDocumentAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = WorkflowDocument
@@ -39,6 +49,7 @@ class WorkflowDocumentSerializer(serializers.ModelSerializer):
         data["related_docs"] = []
 
         return data
+
 
 class WorkflowDocumentUploadInputSerializer(serializers.Serializer):
     file = serializers.FileField()

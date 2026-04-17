@@ -46,6 +46,7 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
             workflow_document_attachment = WorkflowDocumentAttachment.objects.create(
                 document=new_workflow_document,
                 file=file,
+                file_name=file.name,
             )
             uploaded_attachment = upload_workflow_document_attachment_to_openai(
                 workflow_document_attachment,

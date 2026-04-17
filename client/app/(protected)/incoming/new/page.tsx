@@ -25,7 +25,10 @@ export default function WorkflowUpload() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { mutateAsync } = $api.useMutation("post", "/api/documents/upload/");
+  const { data, mutateAsync } = $api.useMutation(
+    "post",
+    "/api/documents/upload/",
+  );
 
   const handleFileChange = (file: File | null) => {
     if (!file) return;
@@ -55,12 +58,13 @@ export default function WorkflowUpload() {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      await mutateAsync({
+      const response = await mutateAsync({
         // openapi-fetch passes body as-is for multipart
         body: formData as any,
       });
 
-      navigate("/incoming");
+      router.push(`/incoming/${response.document_id}/edit`);
+      // navigate("/incoming");
     } catch (err: any) {
       setError(err?.message ?? "Đã xảy ra lỗi khi tải lên. Vui lòng thử lại.");
     } finally {
@@ -147,7 +151,7 @@ export default function WorkflowUpload() {
                   ref={fileInputRef}
                   type="file"
                   className="hidden"
-                  accept=".pdf,.docx,.doc,.png,.jpg,.jpeg"
+                  accept=".pdf,.docx,.doc,.png,.jpg,.jpeg,.xls,.xlsx"
                   onChange={(e) =>
                     handleFileChange(e.target.files?.[0] ?? null)
                   }

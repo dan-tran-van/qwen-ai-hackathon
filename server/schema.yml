@@ -2288,6 +2288,11 @@ components:
           type: array
           items:
             type: string
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowDocumentAttachment'
+          readOnly: true
         created:
           type: string
           format: date-time
@@ -2333,10 +2338,48 @@ components:
         user:
           type: integer
       required:
+      - attachments
       - created
       - id
       - modified
       - user
+    WorkflowDocumentAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        file_size_mb:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        file:
+          type: string
+          format: uri
+        upload_file_id:
+          type: string
+          maxLength: 255
+        file_name:
+          type: string
+          maxLength: 255
+        document:
+          type: string
+          format: uuid
+      required:
+      - created
+      - document
+      - file
+      - file_size_mb
+      - id
+      - modified
     WorkflowDocumentStatusEnum:
       enum:
       - NEW

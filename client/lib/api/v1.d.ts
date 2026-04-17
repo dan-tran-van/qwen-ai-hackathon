@@ -1006,6 +1006,7 @@ export interface components {
             entities?: string[];
             risk_flags?: string[];
             related_docs?: string[];
+            readonly attachments: components["schemas"]["WorkflowDocumentAttachment"][];
             /** Format: date-time */
             readonly created: string;
             /** Format: date-time */
@@ -1026,6 +1027,21 @@ export interface components {
             /** Format: date */
             deadline?: string | null;
             user: number;
+        };
+        WorkflowDocumentAttachment: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly file_size_mb: string;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: date-time */
+            readonly modified: string;
+            /** Format: uri */
+            file: string;
+            upload_file_id?: string;
+            file_name?: string;
+            /** Format: uuid */
+            document: string;
         };
         /**
          * @description * `NEW` - Mới

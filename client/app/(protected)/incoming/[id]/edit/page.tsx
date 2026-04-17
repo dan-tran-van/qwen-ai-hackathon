@@ -45,7 +45,7 @@ export default function WorkflowEdit() {
   const navigate = (path: string) => router.push(path);
   // const doc = documents.find((d) => d.id === id);
   const [showAiSuggestions, setShowAiSuggestions] = useState(false);
-  const [fileName, setFileName] = useState(doc ? `${doc.code}.pdf` : "");
+  const [fileName, setFileName] = useState("");
 
   if (isLoading) {
     return (
@@ -59,26 +59,6 @@ export default function WorkflowEdit() {
       </>
     );
   }
-
-  // if (!doc) {
-  //   return (
-  //     <>
-  //       <div className="flex items-center justify-center h-96">
-  //         <p className="text-sm text-muted-foreground">Không tìm thấy hồ sơ.</p>
-  //       </div>
-  //     </>
-  //   );
-  // }
-
-  // const aiSuggestions = {
-  //   summary: doc.summary,
-  //   type: doc.type,
-  //   subject: doc.subject,
-  //   entities: doc.entities.join(", "),
-  //   deadline: doc.deadline,
-  //   suggestedDept: doc.suggestedDept,
-  //   riskFlags: doc.riskFlags.join("; ") || "Không phát hiện",
-  // };
 
   return (
     <>
@@ -165,13 +145,15 @@ export default function WorkflowEdit() {
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 block">
                   Tệp đính kèm
                 </label>
-                {fileName ? (
+                {doc?.attachments?.[0]?.file_name ? (
                   <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm">
-                    <span className="flex-1 truncate">{fileName}</span>
-                    <span className="text-xs text-muted-foreground">
-                      2.4 MB
+                    <span className="flex-1 truncate">
+                      {doc.attachments[0].file_name}
                     </span>
-                    <label className="text-xs text-primary hover:underline cursor-pointer">
+                    <span className="text-xs text-muted-foreground">
+                      {doc.attachments[0].file_size_mb} MB
+                    </span>
+                    {/* <label className="text-xs text-primary hover:underline cursor-pointer">
                       Thay
                       <input
                         type="file"
@@ -181,7 +163,7 @@ export default function WorkflowEdit() {
                           setFileName(e.target.files[0].name)
                         }
                       />
-                    </label>
+                    </label> */}
                   </div>
                 ) : (
                   <label className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-primary/30 transition-colors">

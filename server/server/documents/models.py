@@ -97,6 +97,7 @@ class WorkflowDocumentAttachment(TimeStampedModel):
     )
     file = models.FileField(upload_to="workflow_documents/")
     upload_file_id = models.CharField(max_length=255, blank=True)
+    file_name = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"Attachment {self.id} for Document {self.document.id}"

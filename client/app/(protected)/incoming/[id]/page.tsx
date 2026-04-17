@@ -55,6 +55,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { $api } from "@/lib/api/api";
 import { DOCUMENT_TYPE_LABEL } from "../constants";
+import Link from "next/link";
 
 // Stage-dependent config
 const stageConfig: Record<string, { sections: string[]; actions: string[] }> = {
@@ -297,15 +298,18 @@ export default function DocumentDetail() {
               <h4 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">
                 Tệp đính kèm
               </h4>
-              <div
-                onClick={() => setShowPreview(true)}
+              <Link
+                href={doc.attachments[0].file}
+                // onClick={() => setShowPreview(true)}
                 className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
               >
                 <FileText className="h-3.5 w-3.5" />
-                <span>{doc.code}.pdf</span>
-                <span className="ml-auto text-[10px]">2.4 MB</span>
+                <span>{doc.attachments[0].file_name}</span>
+                <span className="ml-auto text-[10px]">
+                  {doc.attachments[0].file_size_mb} MB
+                </span>
                 <Eye className="h-3 w-3" />
-              </div>
+              </Link>
             </div>
           </div>
         </div>

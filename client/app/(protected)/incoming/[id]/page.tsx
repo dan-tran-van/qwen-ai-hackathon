@@ -3,7 +3,12 @@ import {
   StatusBadge,
   ConfidentialityBadge,
 } from "@/components/custom/status-badge";
-import { documents, workflowSteps, auditLog } from "@/data/mock-data";
+import {
+  documents,
+  workflowSteps,
+  auditLog,
+  DEPARTMENT_LABELS,
+} from "@/data/mock-data";
 import { useState } from "react";
 import {
   Sparkles,
@@ -345,7 +350,10 @@ export default function DocumentDetail() {
                   />
                   <MetaField
                     label="Phòng ban đề xuất"
-                    value={doc?.suggested_dept}
+                    value={
+                      DEPARTMENT_LABELS[doc?.department] ||
+                      DEPARTMENT_LABELS[doc?.suggested_dept]
+                    }
                     icon={<Target className="h-3 w-3 text-primary" />}
                   />
                   <MetaField
@@ -665,7 +673,8 @@ export default function DocumentDetail() {
                         {step.stage}
                       </p>
                       <p className="text-[10px] text-muted-foreground">
-                        {step.assignee} · {step.department}
+                        {step.assignee} ·{" "}
+                        {DEPARTMENT_LABELS[step.department] || step.department}
                       </p>
                       {step.date && (
                         <p className="text-[10px] text-muted-foreground">

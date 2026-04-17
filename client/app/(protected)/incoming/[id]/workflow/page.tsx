@@ -1,5 +1,9 @@
 "use client";
-import { documents, workflowSteps as defaultSteps } from "@/data/mock-data";
+import {
+  documents,
+  workflowSteps as defaultSteps,
+  DEPARTMENT_LABELS,
+} from "@/data/mock-data";
 import { StatusBadge } from "@/components/custom/status-badge";
 import {
   Check,
@@ -373,7 +377,8 @@ export default function WorkflowTracking() {
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1">
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Building2 className="h-3 w-3" /> {step.department}
+                        <Building2 className="h-3 w-3" />{" "}
+                        {DEPARTMENT_LABELS[step.department] || step.department}
                       </span>
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <User className="h-3 w-3" /> {step.assignee}

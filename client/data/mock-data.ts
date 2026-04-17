@@ -301,6 +301,16 @@ export const departments = [
   "Văn thư",
 ];
 
+export const DEPARTMENT_LABELS: Record<string, string> = {
+  ADMIN: "Phòng Quản lý Hành chính",
+  PLANNING: "Phòng Kế hoạch Tài chính",
+  ENVIRONMENT: "Phòng Tài nguyên Môi trường",
+  GENERAL: "Phòng Tổng hợp",
+  HUMAN_RESOURCES: "Phòng Tổ chức Cán bộ",
+  MANAGEMENT: "Ban Giám đốc",
+  CLERK: "Văn thư",
+};
+
 export const statusColors: Record<DocumentStatus, string> = {
   NEW: "bg-info/10 text-info",
   IN_PROGRESS: "bg-primary/10 text-primary",

@@ -1,3 +1,5 @@
+from types import new_class
+
 from django.shortcuts import render
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -13,6 +15,7 @@ from server.documents.serializers import WorkflowDocumentSerializer
 from server.documents.serializers import WorkflowDocumentUploadInputSerializer
 from server.documents.services import generate_workflow_document_ai_analysis
 from server.documents.services import upload_workflow_document_attachment_to_openai
+from server.workflows.models import WorkflowStage, WorkflowStep
 
 # Create your views here.
 
@@ -39,6 +42,7 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
                 received_date=timezone.now().date(),
                 user=request.user,
             )
+
             workflow_document_attachment = WorkflowDocumentAttachment.objects.create(
                 document=new_workflow_document,
                 file=file,
@@ -73,6 +77,55 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
             new_workflow_document.risk_flags = document_ai_analysis.risk_flags
             new_workflow_document.related_docs = document_ai_analysis.related_docs
             new_workflow_document.save()
+            new_intake_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.INTAKE,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="current",
+                date=timezone.now(),
+            )
+            new_classification_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.CLASSIFICATION_AND_REGISTRATION,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="pending",
+                date=timezone.now(),
+            )
+            new_distribution_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.DISTRIBUTION,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="pending",
+                date=timezone.now(),
+            )
+            new_specialized_processing_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.SPECIALIZED_PROCESSING,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="pending",
+                date=timezone.now(),
+            )
+            new_approval_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.APPROVAL,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="pending",
+                date=timezone.now(),
+            )
+            new_feedback_distribution_workflow_step = WorkflowStep.objects.create(
+                document=new_workflow_document,
+                stage=WorkflowStage.FEEDBACK_DISTRIBUTION,
+                department=new_workflow_document.department,
+                assignee=request.user.username,
+                status="pending",
+                date=timezone.now(),
+            )
+
             return Response(
                 {
                     "message": "Document uploaded successfully",

@@ -3,7 +3,7 @@ import {
   StatusBadge,
   ConfidentialityBadge,
 } from "@/components/custom/status-badge";
-import { documents } from "@/data/mock-data";
+import { DEPARTMENT_LABELS, documents } from "@/data/mock-data";
 import {
   Search,
   Filter,
@@ -169,7 +169,7 @@ export default function IncomingDocuments() {
                         {DOCUMENT_TYPE_LABEL[doc.document_type]}
                       </td>
                       <td className="px-5 py-3 text-xs text-muted-foreground">
-                        {doc.department}
+                        {DEPARTMENT_LABELS[doc.department]}
                       </td>
                       <td className="px-5 py-3">
                         <ConfidentialityBadge level={doc.confidentiality} />

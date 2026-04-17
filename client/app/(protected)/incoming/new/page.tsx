@@ -15,20 +15,6 @@ const docTypes = [
   "Văn bản",
   "Quyết định",
 ];
-const statuses: DocumentStatus[] = [
-  "Mới",
-  "Đang xử lý",
-  "Chờ phối hợp",
-  "Chờ phê duyệt",
-  "Hoàn tất",
-];
-const confidentialityLevels: Confidentiality[] = [
-  "Thường",
-  "Mật",
-  "Tối mật",
-  "Tuyệt mật",
-];
-
 export default function WorkflowUpload() {
   const router = useRouter();
   const navigate = (path: string) => router.push(path);

@@ -85,7 +85,7 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
 
 
 class WorkflowDocumentListView(generics.ListAPIView):
-    queryset = WorkflowDocument.objects.all()
+    queryset = WorkflowDocument.objects.all().order_by("-created")
     serializer_class = WorkflowDocumentSerializer
     permission_classes = [IsAuthenticated]
 

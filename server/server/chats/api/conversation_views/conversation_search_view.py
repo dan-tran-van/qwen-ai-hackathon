@@ -45,7 +45,10 @@ class ConversationSearchView(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.query_params.get("q", "").strip()
-        queryset = Conversation.objects.filter(user=self.request.user)
+        queryset = Conversation.objects.filter(
+            user=self.request.user,
+            messages__isnull=False,
+        ).distinct()
 
         if query:
             queryset = queryset.filter(

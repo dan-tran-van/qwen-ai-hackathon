@@ -43,12 +43,14 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
                 document=new_workflow_document,
                 file=file,
             )
-            file_id = upload_workflow_document_attachment_to_openai(
+            uploaded_attachment = upload_workflow_document_attachment_to_openai(
                 workflow_document_attachment,
             )
-            workflow_document_attachment.upload_file_id = file_id
+            workflow_document_attachment.upload_file_id = uploaded_attachment.file_id
             workflow_document_attachment.save()
-            document_ai_analysis = generate_workflow_document_ai_analysis(file_id)
+            document_ai_analysis = generate_workflow_document_ai_analysis(
+                uploaded_attachment
+            )
             print("AI Analysis Result:", document_ai_analysis)
             # Handle file upload and document creation logic here
             new_workflow_document.title = document_ai_analysis.title
@@ -63,6 +65,13 @@ class WorkflowDocumentUploadView(generics.GenericAPIView):
             new_workflow_document.ai_confidence = document_ai_analysis.ai_confidence
             new_workflow_document.subject = document_ai_analysis.subject
             new_workflow_document.deadline = document_ai_analysis.deadline
+            new_workflow_document.suggested_reviewer = (
+                document_ai_analysis.suggested_reviewer
+            )
+            new_workflow_document.suggested_dept = document_ai_analysis.suggested_dept
+            new_workflow_document.entities = document_ai_analysis.entities
+            new_workflow_document.risk_flags = document_ai_analysis.risk_flags
+            new_workflow_document.related_docs = document_ai_analysis.related_docs
             new_workflow_document.save()
             return Response(
                 {

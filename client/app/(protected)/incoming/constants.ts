@@ -1,3 +1,5 @@
+import { Confidentiality } from "@/data/mock-data";
+
 export type DocumentStatus =
   | "NEW"
   | "IN_PROGRESS"
@@ -5,6 +7,13 @@ export type DocumentStatus =
   | "PENDING_APPROVAL"
   | "OVERDUE"
   | "COMPLETED";
+
+export const DOCUMENT_CONFIDENTIALITY_LABEL: Record<Confidentiality, string> = {
+  UNCLASSIFIED: "Không phân loại",
+  CONFIDENTIAL: "Mật",
+  SECRET: "Tối mật",
+  TOP_SECRET: "Tuyệt mật",
+};
 
 export const DOCUMENT_STATUS_LABEL: Record<DocumentStatus, string> = {
   NEW: "Mới",

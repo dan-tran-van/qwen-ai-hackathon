@@ -1,8 +1,10 @@
+"use client";
 import {
   ConfidentialityBadge,
   StatusBadge,
 } from "@/components/custom/status-badge";
 import { documents } from "@/data/mock-data";
+import { $api } from "@/lib/api/api";
 import {
   FileText,
   Clock,
@@ -48,7 +50,10 @@ const securityDist = [
 ];
 
 export default function Dashboard() {
-  const activeQueue = documents.filter((d) => d.status !== "Hoàn tất");
+  const { data, isLoading, error } = $api.useQuery("get", "/api/documents/");
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -82,7 +87,7 @@ export default function Dashboard() {
               </h3>
             </div>
             <div className="divide-y divide-border/30">
-              {activeQueue.map((doc) => (
+              {data?.results.map((doc) => (
                 <Link
                   key={doc.id}
                   href={`/incoming/${doc.id}`}

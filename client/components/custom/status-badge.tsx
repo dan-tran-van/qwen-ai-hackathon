@@ -1,4 +1,7 @@
-import { DOCUMENT_STATUS_LABEL } from "@/app/(protected)/incoming/constants";
+import {
+  DOCUMENT_CONFIDENTIALITY_LABEL,
+  DOCUMENT_STATUS_LABEL,
+} from "@/app/(protected)/incoming/constants";
 import {
   DocumentStatus,
   Confidentiality,
@@ -21,7 +24,7 @@ export function ConfidentialityBadge({ level }: { level: Confidentiality }) {
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${confidentialityColors[level]}`}
     >
-      {level}
+      {DOCUMENT_CONFIDENTIALITY_LABEL[level]}
     </span>
   );
 }

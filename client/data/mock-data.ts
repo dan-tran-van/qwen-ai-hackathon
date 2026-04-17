@@ -5,7 +5,11 @@ export type DocumentStatus =
   | "PENDING_APPROVAL"
   | "OVERDUE"
   | "COMPLETED";
-export type Confidentiality = "Thường" | "Mật" | "Tối mật" | "Tuyệt mật";
+export type Confidentiality =
+  | "UNCLASSIFIED"
+  | "CONFIDENTIAL"
+  | "SECRET"
+  | "TOP_SECRET";
 
 export interface GovDocument {
   id: string;

@@ -77,7 +77,7 @@ export function AppSidebar() {
                 Cuộc trò chuyện
               </span>
               <button
-                // onClick={() => navigate("/ai-chat")}
+                onClick={() => (location.href = "/ai-assistant")}
                 className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
                 title="Cuộc trò chuyện mới"
               >
@@ -87,19 +87,19 @@ export function AppSidebar() {
 
             <ScrollArea className="flex-1 px-2">
               <div className="space-y-3 pb-4">
-                {data && data.length > 0 && (
+                {data && data.results.length > 0 && (
                   <ChatGroup
                     label="Hôm nay"
-                    chats={data}
+                    chats={data.results}
                     navigate={(path) => (location.href = path)}
                     currentPath={location.pathname}
                   />
                 )}
                 {last7DaysConversations &&
-                  last7DaysConversations.length > 0 && (
+                  last7DaysConversations.results.length > 0 && (
                     <ChatGroup
                       label="7 ngày qua"
-                      chats={last7DaysConversations}
+                      chats={last7DaysConversations.results}
                       navigate={(path) => (location.href = path)}
                       currentPath={location.pathname}
                     />

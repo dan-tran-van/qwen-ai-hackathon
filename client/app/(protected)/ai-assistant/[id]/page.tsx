@@ -7,15 +7,14 @@ import {
   Send,
   Paperclip,
   User,
-  Sparkles,
   X,
   FileText,
-  Plus,
   Search,
   BookOpen,
   Inbox,
   Upload,
   File,
+  Loader2,
 } from "lucide-react";
 import {
   Dialog,
@@ -23,7 +22,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { $api } from "@/lib/api/api";
+import { components } from "@/lib/api/v1";
 
 type AttachmentItem = {
   source: "workflow" | "library" | "local";
@@ -35,7 +41,7 @@ type AttachmentItem = {
 
 interface ChatMessage {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
   attachments?: AttachmentItem[];
   citations?: string[];
@@ -48,8 +54,11 @@ const defaultSuggestions = [
 ];
 
 export default function AIChat() {
+  const params = useParams<{ id: string }>();
+  const conversationId = params?.id;
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  // const [searchParams, setSearchParams] = useSearchParams();
   const prefillSource = searchParams.get("source") as
     | "workflow"
     | "library"
@@ -62,10 +71,46 @@ export default function AIChat() {
     AttachmentItem[]
   >([]);
   const [showDocPicker, setShowDocPicker] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
 
-  // Handle deep-link from document detail pages
+  const conversationQuery = $api.useQuery(
+    "get",
+    "/api/chats/conversations/{id}/",
+    {
+      params: {
+        path: {
+          id: conversationId,
+        },
+      },
+    },
+    {
+      enabled: Boolean(conversationId),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { mutateAsync: sendMessage, isPending: isSending } = $api.useMutation(
+    "post",
+    "/api/chats/conversations/{conversation_id}/chat",
+  );
+
+  const mapApiMessage = (
+    message: components["schemas"]["Message"],
+  ): ChatMessage => ({
+    id: String(message.id),
+    role:
+      message.role === "assistant"
+        ? "assistant"
+        : message.role === "system"
+          ? "system"
+          : "user",
+    content: message.content,
+  });
+
+  // Handle deep-link from document detail pages.
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
@@ -95,29 +140,37 @@ export default function AIChat() {
       }
       if (att) {
         setComposerAttachments([att]);
-        setMessages([
-          {
-            id: "intro",
-            role: "assistant",
-            content:
-              "Xin chào! Tôi thấy bạn đã đính kèm một văn bản. Hãy gửi tin nhắn để bắt đầu phân tích.",
-          },
-        ]);
       }
-      searchParams.delete("source");
-      searchParams.delete("docId");
-      // setSearchParams(searchParams, { replace: true });
-    } else {
-      setMessages([
-        {
-          id: "1",
-          role: "assistant",
-          content:
-            "Xin chào! Tôi là trợ lý AI của hệ thống Government Flow. Bạn có thể đính kèm văn bản vào từng tin nhắn hoặc hỏi câu hỏi chung.",
-        },
-      ]);
+      const updatedParams = new URLSearchParams(searchParams.toString());
+      updatedParams.delete("source");
+      updatedParams.delete("docId");
+      const nextQuery = updatedParams.toString();
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
     }
-  }, []);
+  }, [pathname, prefillId, prefillSource, router, searchParams]);
+
+  // Keep local messages in sync with backend conversation.
+  useEffect(() => {
+    if (!conversationQuery.data) return;
+    const apiMessages = conversationQuery.data.messages.map(mapApiMessage);
+    if (apiMessages.length > 0) {
+      setMessages(apiMessages);
+      return;
+    }
+
+    setMessages([
+      {
+        id: "welcome",
+        role: "assistant",
+        content:
+          "Xin chào! Tôi là trợ lý AI của hệ thống Government Flow. Bạn có thể đính kèm văn bản vào từng tin nhắn hoặc hỏi câu hỏi chung.",
+      },
+    ]);
+  }, [conversationQuery.data]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isSending]);
 
   const handleAttachFromPicker = (
     source: "workflow" | "library",
@@ -167,47 +220,67 @@ export default function AIChat() {
     setComposerAttachments((prev) => prev.filter((a) => a.id !== id));
   };
 
-  const handleSend = () => {
+  const buildApiContent = (rawInput: string, attachments: AttachmentItem[]) => {
+    const trimmedInput = rawInput.trim();
+    const attachmentLines = attachments.map((att) => {
+      const sourceLabel =
+        att.source === "workflow"
+          ? "Ho so"
+          : att.source === "library"
+            ? "Thu vien"
+            : "Tep local";
+      return `- [${sourceLabel}] ${att.code}: ${att.title}`;
+    });
+
+    if (attachmentLines.length === 0) return trimmedInput;
+
+    const prefix =
+      trimmedInput.length > 0
+        ? trimmedInput
+        : "Vui long phan tich cac tai lieu dinh kem.";
+    return `${prefix}\n\nTai lieu dinh kem:\n${attachmentLines.join("\n")}`;
+  };
+
+  const handleSend = async () => {
     if (!input.trim() && composerAttachments.length === 0) return;
+
+    if (!conversationId) {
+      setSendError("Khong tim thay cuoc tro chuyen.");
+      return;
+    }
+
+    setSendError(null);
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: input,
+      content: input.trim(),
       attachments:
         composerAttachments.length > 0 ? [...composerAttachments] : undefined,
     };
 
-    // Generate AI response
-    let aiContent: string;
-    const firstAtt = composerAttachments[0];
-    if (firstAtt?.source === "workflow") {
-      const doc = documents.find((d) => d.id === firstAtt.id);
-      aiContent = doc ? getMockResponse(input, doc) : "Không tìm thấy văn bản.";
-    } else if (firstAtt?.source === "library") {
-      const doc = libraryDocuments.find((d) => d.id === firstAtt.id);
-      aiContent = doc
-        ? getMockLibraryResponse(input, doc)
-        : "Không tìm thấy văn bản.";
-    } else if (firstAtt?.source === "local") {
-      aiContent = `Đã nhận tệp **${firstAtt.code}**. Tôi đã phân tích nội dung tệp đính kèm.\n\n${input ? `Về câu hỏi "${input}": Dựa trên nội dung tệp, tôi nhận thấy đây là văn bản hành chính cần xử lý theo quy trình tiêu chuẩn.` : "Bạn có thể hỏi bất kỳ câu hỏi nào về nội dung tệp này."}`;
-    } else {
-      aiContent = `Cảm ơn câu hỏi! Để hỗ trợ chính xác hơn, bạn có thể đính kèm văn bản cụ thể vào tin nhắn.\n\nTôi vẫn có thể trả lời câu hỏi chung về quy trình hành chính.`;
-    }
+    const payloadContent = buildApiContent(input, composerAttachments);
+    const previousMessages = messages;
 
-    const aiMsg: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: aiContent,
-      citations: firstAtt
-        ? firstAtt.source === "library"
-          ? ["Điều 1, khoản 1", "Chương II, mục 3"]
-          : ["Trang 1, đoạn 3", "Điều 5, khoản 2"]
-        : undefined,
-    };
-
-    setMessages((prev) => [...prev, userMsg, aiMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setComposerAttachments([]);
+
+    try {
+      await sendMessage({
+        params: {
+          path: {
+            conversation_id: conversationId,
+          },
+        },
+        body: {
+          content: payloadContent,
+        },
+      });
+      await conversationQuery.refetch();
+    } catch {
+      setMessages(previousMessages);
+      setSendError("Khong gui duoc tin nhan. Vui long thu lai.");
+    }
   };
 
   return (
@@ -216,12 +289,25 @@ export default function AIChat() {
         {/* Messages */}
         <div className="flex-1 overflow-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="max-w-[700px] mx-auto space-y-6">
+            {conversationQuery.isLoading && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Dang tai cuoc tro
+                chuyen...
+              </div>
+            )}
+
+            {conversationQuery.isError && (
+              <div className="text-sm text-destructive">
+                Khong tai duoc lich su tro chuyen.
+              </div>
+            )}
+
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
               >
-                {msg.role === "assistant" && (
+                {msg.role !== "user" && (
                   <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Bot className="h-3.5 w-3.5 text-primary" />
                   </div>
@@ -291,6 +377,18 @@ export default function AIChat() {
                 )}
               </div>
             ))}
+            {isSending && (
+              <div className="flex gap-3">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Bot className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Dang tra
+                  loi...
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
@@ -374,12 +472,18 @@ export default function AIChat() {
               />
               <button
                 onClick={handleSend}
-                disabled={!input.trim() && composerAttachments.length === 0}
+                disabled={
+                  isSending ||
+                  (!input.trim() && composerAttachments.length === 0)
+                }
                 className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 transition disabled:opacity-40 flex-shrink-0"
               >
                 <Send className="h-4 w-4" />
               </button>
             </div>
+            {sendError && (
+              <p className="mt-2 text-xs text-destructive">{sendError}</p>
+            )}
           </div>
         </div>
       </div>
@@ -590,45 +694,4 @@ function DocumentPickerDialog({
       </DialogContent>
     </Dialog>
   );
-}
-
-function getMockResponse(input: string, doc: (typeof documents)[0]): string {
-  const lower = input.toLowerCase();
-  if (lower.includes("tóm tắt") || lower.includes("summary"))
-    return `**Tóm tắt văn bản ${doc.code}:**\n\n${doc.summary}\n\n**Chủ đề chính:** ${doc.subject}\n**Thực thể:** ${doc.entities.join(", ")}`;
-  if (lower.includes("hạn") || lower.includes("deadline"))
-    return `Hạn xử lý của văn bản **${doc.code}** là **${doc.deadline}**.`;
-  if (lower.includes("phòng ban"))
-    return `AI đề xuất chuyển văn bản **${doc.code}** đến **${doc.suggestedDept}**.\nNgười xử lý: **${doc.suggestedReviewer}**`;
-  if (lower.includes("rủi ro"))
-    return doc.riskFlags.length === 0
-      ? `Không phát hiện rủi ro cho **${doc.code}**.`
-      : `⚠️ Cảnh báo:\n${doc.riskFlags.map((f) => `• ${f}`).join("\n")}`;
-  return `Đã phân tích **${doc.code}** – "${doc.title}".\n\nBạn có thể hỏi về tóm tắt, hạn xử lý, phòng ban, hoặc rủi ro.`;
-}
-
-function getMockLibraryResponse(
-  input: string,
-  doc: {
-    code: string;
-    title: string;
-    summary: string;
-    type: string;
-    issuingAgency: string;
-    effectiveDate: string;
-    tags: string[];
-    relatedDocs: string[];
-    content: string;
-  },
-): string {
-  const lower = input.toLowerCase();
-  if (lower.includes("tóm tắt"))
-    return `**Tóm tắt ${doc.code}:**\n\n${doc.summary}`;
-  if (lower.includes("áp dụng"))
-    return `Văn bản **${doc.code}** áp dụng cho các tổ chức thuộc phạm vi **${doc.issuingAgency}**.`;
-  if (lower.includes("yêu cầu"))
-    return `**Yêu cầu chính:**\n• Tuân thủ quy định\n• Thực hiện đúng thời hạn\n• Báo cáo kết quả`;
-  if (lower.includes("thời hạn"))
-    return `Ngày hiệu lực: **${doc.effectiveDate}**`;
-  return `Đã phân tích **${doc.code}** – "${doc.title}". Bạn có thể hỏi về tóm tắt, phạm vi, yêu cầu, hoặc thời hạn.`;
 }

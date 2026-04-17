@@ -2353,6 +2353,9 @@ components:
         file_size_mb:
           type: string
           readOnly: true
+        file_name_alt:
+          type: string
+          readOnly: true
         created:
           type: string
           format: date-time
@@ -2377,6 +2380,7 @@ components:
       - created
       - document
       - file
+      - file_name_alt
       - file_size_mb
       - id
       - modified

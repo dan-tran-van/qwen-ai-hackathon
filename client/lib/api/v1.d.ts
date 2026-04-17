@@ -1032,6 +1032,7 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             readonly file_size_mb: string;
+            readonly file_name_alt: string;
             /** Format: date-time */
             readonly created: string;
             /** Format: date-time */

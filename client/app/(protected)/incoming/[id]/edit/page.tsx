@@ -145,10 +145,12 @@ export default function WorkflowEdit() {
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 block">
                   Tệp đính kèm
                 </label>
-                {doc?.attachments?.[0]?.file_name ? (
+                {doc?.attachments?.[0]?.file_name ||
+                doc?.attachments?.[0]?.file_name_alt ? (
                   <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm">
                     <span className="flex-1 truncate">
-                      {doc.attachments[0].file_name}
+                      {doc.attachments[0].file_name ||
+                        doc.attachments[0].file_name_alt}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {doc.attachments[0].file_size_mb} MB
@@ -157,7 +159,7 @@ export default function WorkflowEdit() {
                       Thay
                       <input
                         type="file"
-                        className="hidden"
+                        className="hidden"  
                         onChange={(e) =>
                           e.target.files?.[0] &&
                           setFileName(e.target.files[0].name)

@@ -304,7 +304,10 @@ export default function DocumentDetail() {
                 className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
               >
                 <FileText className="h-3.5 w-3.5" />
-                <span>{doc.attachments[0].file_name}</span>
+                <span>
+                  {doc.attachments[0].file_name ||
+                    doc.attachments[0].file_name_alt}
+                </span>
                 <span className="ml-auto text-[10px]">
                   {doc.attachments[0].file_size_mb} MB
                 </span>

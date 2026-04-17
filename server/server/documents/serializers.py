@@ -6,6 +6,7 @@ from server.documents.models import WorkflowDocumentAttachment
 
 class WorkflowDocumentAttachmentSerializer(serializers.ModelSerializer):
     file_size_mb = serializers.SerializerMethodField()
+    file_name_alt = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkflowDocumentAttachment
@@ -16,6 +17,11 @@ class WorkflowDocumentAttachmentSerializer(serializers.ModelSerializer):
             # Round to 2 decimal places
             return round(obj.file.size / (1024 * 1024), 2)
         return 0
+
+    def get_file_name_alt(self, obj):
+        if obj.file:
+            return obj.file.name.split("/")[-1]  # Get the file name without the path
+        return ""
 
 
 class WorkflowDocumentSerializer(serializers.ModelSerializer):

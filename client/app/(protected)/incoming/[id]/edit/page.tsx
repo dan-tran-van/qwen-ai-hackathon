@@ -1,36 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Sparkles, Check, RotateCcw, Upload, X } from "lucide-react";
-import { documents, departments } from "@/data/mock-data";
-import type { DocumentStatus, Confidentiality } from "@/data/mock-data";
 import { useParams, useRouter } from "next/navigation";
 import { $api } from "@/lib/api/api";
-
-const docTypes = [
-  "Công văn",
-  "Báo cáo",
-  "Phiếu trình",
-  "Thông báo",
-  "Văn bản",
-  "Quyết định",
-];
-const statuses: DocumentStatus[] = [
-  "Mới",
-  "Đang xử lý",
-  "Chờ phối hợp",
-  "Chờ phê duyệt",
-  "Hoàn tất",
-];
-const confidentialityLevels: Confidentiality[] = [
-  "Thường",
-  "Mật",
-  "Tối mật",
-  "Tuyệt mật",
-];
+import {
+  DEPARTMENT_TYPE_LABEL,
+  DOCUMENT_CONFIDENTIALITY_LABEL,
+  DOCUMENT_STATUS_LABEL,
+  DOCUMENT_TYPE_LABEL,
+} from "../../constants";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function WorkflowEdit() {
   const { id } = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     data: doc,
     isLoading,
@@ -42,10 +26,91 @@ export default function WorkflowEdit() {
       },
     },
   });
+
+  const { mutate: updateDoc, isPending: isSaving } = $api.useMutation(
+    "put",
+    "/api/documents/{id}/update/",
+  );
+
   const navigate = (path: string) => router.push(path);
   // const doc = documents.find((d) => d.id === id);
   const [showAiSuggestions, setShowAiSuggestions] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    code: "",
+    sender: "",
+    department: "",
+    document_type: "",
+    confidentiality: "",
+    status: "",
+    deadline: "",
+    summary: "",
+  });
+
+  useEffect(() => {
+    if (doc) {
+      setFormData({
+        title: doc.title ?? "",
+        code: doc.code ?? "",
+        sender: doc.sender ?? "",
+        department: doc.department ?? "",
+        document_type: doc.document_type ?? "",
+        confidentiality: doc.confidentiality ?? "",
+        status: doc.status ?? "",
+        deadline: doc.deadline ?? "",
+        summary: doc.summary ?? "",
+      });
+    }
+  }, [doc]);
+
+  const objToArray = (obj: Record<string, string>) => {
+    return Object.entries(obj).map(([key, value]) => ({
+      label: value,
+      value: key,
+    }));
+  };
+
+  const onChangeField = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const onSave = async () => {
+    updateDoc(
+      {
+        params: { path: { id: String(id) } },
+        body: {
+          title: formData.title,
+          code: formData.code,
+          sender: formData.sender,
+          department: formData.department as any,
+          document_type: formData.document_type as any,
+          confidentiality: formData.confidentiality as any,
+          status: formData.status as any,
+          deadline: formData.deadline || null,
+          summary: formData.summary,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [
+              "get",
+              "/api/documents/{id}/",
+              {
+                params: { path: { id: String(id) } },
+              },
+            ],
+          });
+
+          router.push(`/incoming/${id}`);
+        },
+      },
+    );
+  };
 
   if (isLoading) {
     return (
@@ -98,33 +163,57 @@ export default function WorkflowEdit() {
             <div className="flex-1 space-y-5">
               <div className="bg-card rounded-xl border border-border/40 p-4 sm:p-6 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <EditField label="Tiêu đề" defaultValue={doc?.title} />
-                  <EditField label="Mã số" defaultValue={doc?.code} />
-                  <EditField label="Đơn vị gửi" defaultValue={doc?.sender} />
+                  <EditField
+                    label="Tiêu đề"
+                    value={formData.title}
+                    onChange={(v) => onChangeField("title", v)}
+                  />
+
+                  <EditField
+                    label="Mã số"
+                    value={formData.code}
+                    onChange={(v) => onChangeField("code", v)}
+                  />
+
+                  <EditField
+                    label="Đơn vị gửi"
+                    value={formData.sender}
+                    onChange={(v) => onChangeField("sender", v)}
+                  />
+
                   <EditSelect
                     label="Phòng ban"
-                    options={departments}
-                    defaultValue={doc?.department}
+                    options={objToArray(DEPARTMENT_TYPE_LABEL)}
+                    value={formData.department}
+                    onChange={(v) => onChangeField("department", v)}
                   />
+
                   <EditSelect
                     label="Loại văn bản"
-                    options={docTypes}
-                    defaultValue={doc?.type}
+                    options={objToArray(DOCUMENT_TYPE_LABEL)}
+                    value={formData.document_type}
+                    onChange={(v) => onChangeField("document_type", v)}
                   />
+
                   <EditSelect
                     label="Bảo mật"
-                    options={confidentialityLevels}
-                    defaultValue={doc?.confidentiality}
+                    options={objToArray(DOCUMENT_CONFIDENTIALITY_LABEL)}
+                    value={formData.confidentiality}
+                    onChange={(v) => onChangeField("confidentiality", v)}
                   />
+
                   <EditSelect
                     label="Trạng thái"
-                    options={statuses}
-                    defaultValue={doc?.status}
+                    options={objToArray(DOCUMENT_STATUS_LABEL)}
+                    value={formData.status}
+                    onChange={(v) => onChangeField("status", v)}
                   />
+
                   <EditField
                     label="Hạn xử lý"
                     type="date"
-                    defaultValue={doc?.deadline}
+                    value={formData.deadline}
+                    onChange={(v) => onChangeField("deadline", v)}
                   />
                 </div>
 
@@ -133,7 +222,8 @@ export default function WorkflowEdit() {
                     Tóm tắt
                   </label>
                   <textarea
-                    defaultValue={doc?.summary}
+                    value={formData.summary}
+                    onChange={(e) => onChangeField("summary", e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition resize-none"
                   />
@@ -193,10 +283,11 @@ export default function WorkflowEdit() {
                   Hủy
                 </button>
                 <button
-                  onClick={() => navigate(`/incoming/${id}`)}
+                  onClick={() => onSave()}
+                  disabled={isSaving}
                   className="h-10 px-5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
                 >
-                  Lưu thay đổi
+                  {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
                 </button>
               </div>
             </div>
@@ -261,12 +352,14 @@ function AiSuggestionRow({ label, value }: { label: string; value: string }) {
 
 function EditField({
   label,
-  defaultValue,
+  value,
+  onChange,
   placeholder,
   type = "text",
 }: {
   label: string;
-  defaultValue?: string;
+  value?: string | null;
+  onChange?: (v: string) => void;
   placeholder?: string;
   type?: string;
 }) {
@@ -277,7 +370,8 @@ function EditField({
       </label>
       <input
         type={type}
-        defaultValue={defaultValue}
+        value={value ?? ""}
+        onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}
         className="w-full h-10 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition"
       />
@@ -285,14 +379,21 @@ function EditField({
   );
 }
 
+type selectOptions = {
+  label?: string;
+  value?: string;
+};
+
 function EditSelect({
   label,
   options,
-  defaultValue,
+  value,
+  onChange,
 }: {
   label: string;
-  options: string[];
-  defaultValue?: string;
+  options: selectOptions[];
+  value?: string;
+  onChange?: (v: string) => void;
 }) {
   return (
     <div>
@@ -300,12 +401,13 @@ function EditSelect({
         {label}
       </label>
       <select
-        defaultValue={defaultValue}
+        value={value ?? ""}
+        onChange={(e) => onChange?.(e.target.value)}
         className="w-full h-10 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition"
       >
         {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
+          <option key={o.value} value={o.value}>
+            {o.label}
           </option>
         ))}
       </select>

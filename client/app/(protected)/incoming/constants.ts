@@ -42,3 +42,22 @@ export const DOCUMENT_TYPE_LABEL: Record<DocumentType, string> = {
   ANNOUNCEMENT: "Thông báo",
   OTHER: "Khác",
 };
+
+type DepartmentType =
+  | "ADMIN"
+  | "PLANNING"
+  | "ENVIRONMENT"
+  | "GENERAL"
+  | "HUMAN_RESOURCES"
+  | "MANAGEMENT"
+  | "CLERK";
+
+export const DEPARTMENT_TYPE_LABEL: Record<DepartmentType, string> = {
+  ADMIN: "Phòng Quản lý Hành chính",
+  PLANNING: "Phòng Kế hoạch Tài chính",
+  ENVIRONMENT: "Phòng Tài nguyên Môi trường",
+  GENERAL: "Phòng Tổng hợp",
+  HUMAN_RESOURCES: "Phòng Tổ chức Cán bộ",
+  MANAGEMENT: "Ban Giám đốc",
+  CLERK: "Văn thư",
+};

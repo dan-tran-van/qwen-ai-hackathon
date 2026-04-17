@@ -1,5 +1,3 @@
-from types import new_class
-
 from django.shortcuts import render
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -9,11 +7,14 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from server.documents.admin import WorkflowDocumentAIDraftResponse
 from server.documents.models import WorkflowDocument
 from server.documents.models import WorkflowDocumentAttachment
+from server.documents.serializers import WorkflowDocumentAIDraftResponseSerializer
 from server.documents.serializers import WorkflowDocumentSerializer
 from server.documents.serializers import WorkflowDocumentUploadInputSerializer
 from server.documents.services import generate_workflow_document_ai_analysis
+from server.documents.services import generate_workflow_response_from_workflow_document
 from server.documents.services import upload_workflow_document_attachment_to_openai
 from server.workflows.models import WorkflowStage
 from server.workflows.models import WorkflowStep
@@ -159,12 +160,15 @@ class WorkflowDocumentUpdateView(generics.UpdateAPIView):
 
 
 class WorkflowDocumentResponseGenerationView(generics.GenericAPIView):
-    queryset = WorkflowDocument.objects.all()
-    serializer_class = WorkflowDocumentSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        document = self.get_object()
-        # Implement your response generation logic here using the document details
-        generated_response = f"Generated response for document: {document.title}"
-        return Response({"generated_response": generated_response})
+        id = self.kwargs.get("pk")
+        document = WorkflowDocument.objects.get(id=id)
+        ai_draft_response = generate_workflow_response_from_workflow_document(document)
+        new_ai_draft_response = WorkflowDocumentAIDraftResponse.objects.create(
+            document=document,
+            content=ai_draft_response,
+        )
+        serializer = WorkflowDocumentAIDraftResponseSerializer(new_ai_draft_response)
+        return Response(serializer.data)

@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/generate_response/",
-        WorkflowDocumentResponseGenerationView.as_view(),  # noqa: F821
+        WorkflowDocumentResponseGenerationView.as_view(),
         name="workflow_document_generate_response",
     ),
     path(

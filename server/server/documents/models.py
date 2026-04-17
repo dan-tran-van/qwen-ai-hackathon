@@ -103,14 +103,14 @@ class WorkflowDocumentAttachment(TimeStampedModel):
         return f"Attachment {self.id} for Document {self.document.id}"
 
 
-class WorkflowDocumentAIDraftResponse(models.Model):
+class WorkflowDocumentAIDraftResponse(TimeStampedModel):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     document = models.OneToOneField(
         WorkflowDocument,
         on_delete=models.CASCADE,
         related_name="ai_draft_response",
     )
-    assignee = models.CharField(max_length=255, blank=True)
-    notes = models.TextField(blank=True)
+    content = models.TextField(blank=True)
 
     def __str__(self):
         return f"AI Draft Response for Document {self.document.id}"

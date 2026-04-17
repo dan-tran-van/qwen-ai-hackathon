@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from server.documents.models import WorkflowDocument
+from server.documents.models import WorkflowDocumentAIDraftResponse
 from server.documents.models import WorkflowDocumentAttachment
 
 
@@ -42,7 +43,7 @@ class WorkflowDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkflowDocument
-        fields = "__all__"
+        exclude = ("user",)  # Exclude the user field from the serializer
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -59,3 +60,9 @@ class WorkflowDocumentSerializer(serializers.ModelSerializer):
 
 class WorkflowDocumentUploadInputSerializer(serializers.Serializer):
     file = serializers.FileField()
+
+
+class WorkflowDocumentAIDraftResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkflowDocumentAIDraftResponse
+        fields = "__all__"

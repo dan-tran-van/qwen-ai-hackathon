@@ -10,6 +10,8 @@ from typing import Literal
 from openai import OpenAI
 from pydantic import BaseModel
 from pydantic import Field
+from server.documents.models import WorkflowDocument as WorkflowDocumentModel
+from server.documents.serializers import WorkflowDocumentSerializer
 
 if TYPE_CHECKING:
     from server.documents.models import WorkflowDocumentAttachment
@@ -306,10 +308,12 @@ def generate_response_with_workflow_document_attachment(
 
 
 def generate_workflow_response_from_workflow_document(
-    workflow_document: WorkflowDocument,
+    workflow_document: WorkflowDocumentModel,
     attachment_id: str | None = None,
 ) -> str:
     client = get_openai_client()
+    serializer = WorkflowDocumentSerializer(workflow_document)
+    workflow_document_dict = serializer.data
 
     response = client.responses.create(
         model="gpt-5",
@@ -323,31 +327,18 @@ def generate_workflow_response_from_workflow_document(
                             "You are a helpful assistant for government document processing. "
                             "Based on the following government document information, "
                             "draft the final response to issue to the relevant citizen/stake holder. "
+                            "The response should be in Vietnamese and should be formal, concise, and clear. "
+                            "Make sure to address the sender appropriately and include any necessary information from the document. "
+                            "If the document is missing key information, make reasonable assumptions to fill in the gaps in the response. "
                         ),
                     },
                     {
                         "type": "input_text",
-                        "text": workflow_document.model_dump_json(),
+                        "text": workflow_document_dict,
                     },
                 ],
             }
         ],
-        text={
-            "format": {
-                "type": "json_schema",
-                "name": "workflow_response",
-                "schema": {
-                    "type": "object",
-                    "additionalProperties": False,
-                    "properties": {
-                        "next_stage": {"type": "string"},
-                        "assignee": {"type": ["string", "null"]},
-                        "notes": {"type": ["string", "null"]},
-                    },
-                    "required": ["next_stage", "assignee", "notes"],
-                },
-            }
-        },
     )
 
     return response.output_text

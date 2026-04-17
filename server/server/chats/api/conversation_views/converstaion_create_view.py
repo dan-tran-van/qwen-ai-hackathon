@@ -9,6 +9,9 @@ from server.chats.serializers.conversation_serializers.conversation_create_seria
 class ConversationCreateView(generics.CreateAPIView):
     """
     API view to create a new conversation for the authenticated user.
+
+    Accepts the first message from the user and automatically generates
+    a conversation title based on the message content.
     """
 
     serializer_class = ConversationCreateSerializer

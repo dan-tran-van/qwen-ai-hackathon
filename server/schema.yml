@@ -477,7 +477,11 @@ paths:
   /api/chats/conversations/create/:
     post:
       operationId: chats_conversations_create_create
-      description: API view to create a new conversation for the authenticated user.
+      description: |-
+        API view to create a new conversation for the authenticated user.
+
+        Accepts the first message from the user and automatically generates
+        a conversation title based on the message content.
       tags:
       - chats
       requestBody:
@@ -491,6 +495,7 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ConversationCreateRequest'
+        required: true
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
@@ -514,6 +519,43 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      tags:
+      - chats
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedConversationList'
+          description: ''
+  /api/chats/conversations/search/:
+    get:
+      operationId: chats_conversations_search_list
+      description: Search authenticated user's conversations by keyword. Matches against
+        conversation title, system prompt, and message content.
+      summary: Search conversations
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search keyword. If omitted, returns all conversations.
+        examples:
+          Invoice:
+            value: invoice
+          MeetingNotes:
+            value: meeting notes
+            summary: Meeting Notes
       tags:
       - chats
       security:
@@ -1588,7 +1630,7 @@ components:
           readOnly: true
         title:
           type: string
-          maxLength: 255
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1600,13 +1642,18 @@ components:
       required:
       - created_at
       - id
+      - title
       - updated_at
     ConversationCreateRequest:
       type: object
       properties:
-        title:
+        content:
           type: string
-          maxLength: 255
+          writeOnly: true
+          minLength: 1
+          description: The first message content from the user
+      required:
+      - content
     ConversationDetailResponse:
       type: object
       properties:

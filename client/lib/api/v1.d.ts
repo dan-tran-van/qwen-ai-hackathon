@@ -319,7 +319,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description API view to create a new conversation for the authenticated user. */
+        /**
+         * @description API view to create a new conversation for the authenticated user.
+         *
+         *     Accepts the first message from the user and automatically generates
+         *     a conversation title based on the message content.
+         */
         post: operations["chats_conversations_create_create"];
         delete?: never;
         options?: never;
@@ -336,6 +341,26 @@ export interface paths {
         };
         /** @description API view to list conversations from the last 7 days for the authenticated user. */
         get: operations["chats_conversations_last_7_days_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chats/conversations/search/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search conversations
+         * @description Search authenticated user's conversations by keyword. Matches against conversation title, system prompt, and message content.
+         */
+        get: operations["chats_conversations_search_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -678,14 +703,15 @@ export interface components {
         ConversationCreate: {
             /** Format: uuid */
             readonly id: string;
-            title?: string;
+            readonly title: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
         };
         ConversationCreateRequest: {
-            title?: string;
+            /** @description The first message content from the user */
+            content: string;
         };
         ConversationDetailResponse: {
             conversation: components["schemas"]["Conversation"];
@@ -1465,7 +1491,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
                 "application/json": components["schemas"]["ConversationCreateRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["ConversationCreateRequest"];
@@ -1488,6 +1514,30 @@ export interface operations {
             query?: {
                 /** @description A page number within the paginated result set. */
                 page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedConversationList"];
+                };
+            };
+        };
+    };
+    chats_conversations_search_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Search keyword. If omitted, returns all conversations. */
+                q?: string;
             };
             header?: never;
             path?: never;

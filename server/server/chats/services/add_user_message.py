@@ -3,6 +3,9 @@ from django.utils import timezone
 
 from server.chats.models.conversation_model import Conversation
 from server.chats.models.message_model import Message
+from server.chats.services.generate_conversation_title import (
+    generate_conversation_title,
+)
 
 
 @transaction.atomic
@@ -20,7 +23,7 @@ def add_user_message(conversation: Conversation, content: str) -> Message:
 
     conversation.last_message_at = timezone.now()
     if not conversation.title.strip():
-        conversation.title = content[:80]
+        conversation.title = generate_conversation_title(content)
     conversation.save(update_fields=["title", "last_message_at", "updated_at"])
 
     return message

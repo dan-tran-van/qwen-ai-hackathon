@@ -12,6 +12,9 @@ from server.chats.api.conversation_views.conversation_last_7_days_list import (
 from server.chats.api.conversation_views.conversation_list_view import (
     ConversationListView,
 )
+from server.chats.api.conversation_views.conversation_search_view import (
+    ConversationSearchView,
+)
 from server.chats.api.conversation_views.conversation_today_list import (
     ConversationTodayListView,
 )
@@ -22,6 +25,11 @@ from server.chats.api.message_views.message_create_view import MessageCreateView
 
 urlpatterns = [
     path("conversations/", ConversationListView.as_view(), name="conversation-list"),
+    path(
+        "conversations/search/",
+        ConversationSearchView.as_view(),
+        name="conversation-search",
+    ),
     path(
         "conversations/today/",
         ConversationTodayListView.as_view(),

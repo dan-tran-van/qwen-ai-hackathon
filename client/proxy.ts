@@ -12,13 +12,17 @@ const protectedRoutes = [
   "/analytics",
   "/security",
 ];
-const publicRoutes = ["/login", "/signup"];
+const publicRoutes = ["/login", "/signup", "/auth/google/callback"];
 
 export default async function proxy(req: NextRequest) {
   // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
+
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
 
   // 3. Get the access token from cookies
   const access = (await cookies()).get("access")?.value;

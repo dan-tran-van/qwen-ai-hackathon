@@ -3,6 +3,7 @@ import { $api } from "@/lib/api/api";
 import { useAuth } from "@/providers/auth-provider";
 import { redirect, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function GoogleCallbackPage() {
   const { user } = useAuth();
@@ -11,9 +12,14 @@ export default function GoogleCallbackPage() {
   const { data, isLoading, error } = $api.useQuery(
     "post",
     "/api/auth/google/",
-    { body: { code: code || "" } },
     {
-      enabled: !!code && !user, // Only run if we have a code and no user is logged in
+      body: { code: code || "" },
+      headers: {
+        "X-CSRFToken": Cookies.get("csrftoken") || "",
+      },
+    },
+    {
+      enabled: !!code, // Only run if we have a code and no user is logged in
     },
   );
   useEffect(() => {

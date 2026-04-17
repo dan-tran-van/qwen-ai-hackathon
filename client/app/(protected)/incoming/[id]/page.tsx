@@ -166,8 +166,22 @@ export default function DocumentDetail() {
       },
     },
   });
+  const { data: workflowData, isLoading: workflowLoading } = $api.useQuery(
+    "get",
+    "/api/workflows/document/{document_id}/workflow-steps/",
+    {
+      params: {
+        path: {
+          document_id: String(id),
+        },
+      },
+    },
+    {
+      enabled: !!id,
+    },
+  );
 
-  if (isLoading) {
+  if (isLoading || workflowLoading) {
     return <div>Loading...</div>;
   }
 
@@ -596,7 +610,7 @@ export default function DocumentDetail() {
               )}
               {config.actions.includes("workflow") && (
                 <button
-                  onClick={() => navigate(`/document/${doc.id}/workflow`)}
+                  onClick={() => navigate(`/incoming/${doc.id}/workflow`)}
                   className="h-9 px-4 rounded-lg border border-border/60 bg-card text-sm font-medium text-foreground flex items-center gap-2 hover:bg-muted transition-colors"
                 >
                   <GitBranch className="h-3.5 w-3.5" /> Theo dõi quy trình
@@ -629,7 +643,7 @@ export default function DocumentDetail() {
                 <StatusBadge status={doc.status} />
               </div>
               <div className="space-y-3 mb-5">
-                {workflowSteps.slice(0, 4).map((step, i) => (
+                {workflowData?.results.slice(0, 4).map((step, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div
                       className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-medium ${

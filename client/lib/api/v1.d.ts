@@ -575,6 +575,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/workflows/document/{document_id}/workflow-steps/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["workflows_document_workflow_steps_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflows/workflow-steps/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["workflows_workflow_steps_list"];
+        put?: never;
+        post: operations["workflows_workflow_steps_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflows/workflow-steps/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["workflows_workflow_steps_retrieve"];
+        put: operations["workflows_workflow_steps_update"];
+        post?: never;
+        delete: operations["workflows_workflow_steps_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["workflows_workflow_steps_partial_update"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -805,6 +853,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["WorkflowDocument"][];
         };
+        PaginatedWorkflowStepList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["WorkflowStep"][];
+        };
         PasswordChangeRequest: {
             new_password1: string;
             new_password2: string;
@@ -852,6 +915,17 @@ export interface components {
             /** Name of User */
             name?: string;
         };
+        PatchedWorkflowStepRequest: {
+            stage?: components["schemas"]["StageEnum"];
+            department?: components["schemas"]["DepartmentEnum"];
+            assignee?: string;
+            status?: components["schemas"]["WorkflowStepStatusEnum"];
+            /** Format: date-time */
+            date?: string | null;
+            note?: string;
+            /** Format: uuid */
+            document?: string | null;
+        };
         RestAuthDetail: {
             readonly detail: string;
         };
@@ -872,6 +946,16 @@ export interface components {
             code?: string;
             id_token?: string;
         };
+        /**
+         * @description * `Tiếp nhận` - Intake
+         *     * `Phân loại & Đăng ký` - Classification And Registration
+         *     * `Phân phối` - Distribution
+         *     * `Xử lý chuyên môn` - Specialized Processing
+         *     * `Phê duyệt` - Approval
+         *     * `Phát hành phản hồi` - Feedback Distribution
+         * @enum {string}
+         */
+        StageEnum: "Tiếp nhận" | "Phân loại & Đăng ký" | "Phân phối" | "Xử lý chuyên môn" | "Phê duyệt" | "Phát hành phản hồi";
         TokenRefresh: {
             readonly access: string;
         };
@@ -957,6 +1041,40 @@ export interface components {
             /** Format: binary */
             file: string;
         };
+        WorkflowStep: {
+            readonly id: number;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: date-time */
+            readonly modified: string;
+            stage?: components["schemas"]["StageEnum"];
+            department: components["schemas"]["DepartmentEnum"];
+            assignee: string;
+            status: components["schemas"]["WorkflowStepStatusEnum"];
+            /** Format: date-time */
+            date?: string | null;
+            note?: string;
+            /** Format: uuid */
+            document?: string | null;
+        };
+        WorkflowStepRequest: {
+            stage?: components["schemas"]["StageEnum"];
+            department: components["schemas"]["DepartmentEnum"];
+            assignee: string;
+            status: components["schemas"]["WorkflowStepStatusEnum"];
+            /** Format: date-time */
+            date?: string | null;
+            note?: string;
+            /** Format: uuid */
+            document?: string | null;
+        };
+        /**
+         * @description * `completed` - Completed
+         *     * `current` - Current
+         *     * `pending` - Pending
+         * @enum {string}
+         */
+        WorkflowStepStatusEnum: "completed" | "current" | "pending";
     };
     responses: never;
     parameters: never;
@@ -1937,6 +2055,176 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    workflows_document_workflow_steps_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWorkflowStepList"];
+                };
+            };
+        };
+    };
+    workflows_workflow_steps_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWorkflowStepList"];
+                };
+            };
+        };
+    };
+    workflows_workflow_steps_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkflowStepRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WorkflowStepRequest"];
+                "multipart/form-data": components["schemas"]["WorkflowStepRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowStep"];
+                };
+            };
+        };
+    };
+    workflows_workflow_steps_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this workflow step. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowStep"];
+                };
+            };
+        };
+    };
+    workflows_workflow_steps_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this workflow step. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkflowStepRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WorkflowStepRequest"];
+                "multipart/form-data": components["schemas"]["WorkflowStepRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowStep"];
+                };
+            };
+        };
+    };
+    workflows_workflow_steps_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this workflow step. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    workflows_workflow_steps_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this workflow step. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedWorkflowStepRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkflowStepRequest"];
+                "multipart/form-data": components["schemas"]["PatchedWorkflowStepRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowStep"];
                 };
             };
         };

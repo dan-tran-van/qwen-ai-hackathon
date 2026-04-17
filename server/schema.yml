@@ -1266,6 +1266,192 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
           description: ''
+  /api/workflows/document/{document_id}/workflow-steps/:
+    get:
+      operationId: workflows_document_workflow_steps_list
+      parameters:
+      - in: path
+        name: document_id
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - workflows
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkflowStepList'
+          description: ''
+  /api/workflows/workflow-steps/:
+    get:
+      operationId: workflows_workflow_steps_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - workflows
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkflowStepList'
+          description: ''
+    post:
+      operationId: workflows_workflow_steps_create
+      tags:
+      - workflows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStep'
+          description: ''
+  /api/workflows/workflow-steps/{id}/:
+    get:
+      operationId: workflows_workflow_steps_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this workflow step.
+        required: true
+      tags:
+      - workflows
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStep'
+          description: ''
+    put:
+      operationId: workflows_workflow_steps_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this workflow step.
+        required: true
+      tags:
+      - workflows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkflowStepRequest'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStep'
+          description: ''
+    patch:
+      operationId: workflows_workflow_steps_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this workflow step.
+        required: true
+      tags:
+      - workflows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowStepRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowStepRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkflowStepRequest'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStep'
+          description: ''
+    delete:
+      operationId: workflows_workflow_steps_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this workflow step.
+        required: true
+      tags:
+      - workflows
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
     Agency:
@@ -1752,6 +1938,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WorkflowDocument'
+    PaginatedWorkflowStepList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStep'
     PasswordChangeRequest:
       type: object
       properties:
@@ -1873,6 +2082,29 @@ components:
           type: string
           title: Name of User
           maxLength: 255
+    PatchedWorkflowStepRequest:
+      type: object
+      properties:
+        stage:
+          $ref: '#/components/schemas/StageEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        assignee:
+          type: string
+          minLength: 1
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/WorkflowStepStatusEnum'
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+        document:
+          type: string
+          format: uuid
+          nullable: true
     RestAuthDetail:
       type: object
       properties:
@@ -1909,6 +2141,22 @@ components:
           type: string
         id_token:
           type: string
+    StageEnum:
+      enum:
+      - Tiếp nhận
+      - Phân loại & Đăng ký
+      - Phân phối
+      - Xử lý chuyên môn
+      - Phê duyệt
+      - Phát hành phản hồi
+      type: string
+      description: |-
+        * `Tiếp nhận` - Intake
+        * `Phân loại & Đăng ký` - Classification And Registration
+        * `Phân phối` - Distribution
+        * `Xử lý chuyên môn` - Specialized Processing
+        * `Phê duyệt` - Approval
+        * `Phát hành phản hồi` - Feedback Distribution
     TokenRefresh:
       type: object
       properties:
@@ -2113,6 +2361,83 @@ components:
           format: binary
       required:
       - file
+    WorkflowStep:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        stage:
+          $ref: '#/components/schemas/StageEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        assignee:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/WorkflowStepStatusEnum'
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+        document:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - assignee
+      - created
+      - department
+      - id
+      - modified
+      - status
+    WorkflowStepRequest:
+      type: object
+      properties:
+        stage:
+          $ref: '#/components/schemas/StageEnum'
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        assignee:
+          type: string
+          minLength: 1
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/WorkflowStepStatusEnum'
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+        document:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - assignee
+      - department
+      - status
+    WorkflowStepStatusEnum:
+      enum:
+      - completed
+      - current
+      - pending
+      type: string
+      description: |-
+        * `completed` - Completed
+        * `current` - Current
+        * `pending` - Pending
   securitySchemes:
     cookieAuth:
       type: apiKey

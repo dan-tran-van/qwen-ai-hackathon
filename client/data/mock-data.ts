@@ -5,6 +5,7 @@ export type DocumentStatus =
   | "PENDING_APPROVAL"
   | "OVERDUE"
   | "COMPLETED";
+
 export type Confidentiality =
   | "UNCLASSIFIED"
   | "CONFIDENTIAL"

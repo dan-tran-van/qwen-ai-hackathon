@@ -92,7 +92,8 @@ export default function LoginPage() {
     await loginMutation.mutateAsync({
       body: payload,
       headers: {
-        "X-CSRFToken": Cookies.get("csrftoken") || "",
+        "X-CSRFToken":
+          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
       },
     });
   });

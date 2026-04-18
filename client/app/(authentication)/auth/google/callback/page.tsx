@@ -15,7 +15,8 @@ export default function GoogleCallbackPage() {
     {
       body: { code: code || "" },
       headers: {
-        "X-CSRFToken": Cookies.get("csrftoken") || "",
+        "X-CSRFToken":
+          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
       },
     },
     {

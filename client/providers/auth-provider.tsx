@@ -30,7 +30,8 @@ export default function AuthProvider({
   const logout = async () => {
     await fetchClient.POST("/api/auth/logout/", {
       headers: {
-        "X-CSRFToken": Cookies.get("csrftoken") || "",
+        "X-CSRFToken":
+          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
       },
     });
 

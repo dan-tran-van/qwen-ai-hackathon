@@ -17,7 +17,7 @@ const AUTH_EXCLUDED_PATHS = new Set([
   "/api/accounts/login/",
 ]);
 
-console.log(Cookies.get("csrftoken"));
+console.log(Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken")); // Log the CSRF token for debugging
 
 async function refreshToken() {
   try {
@@ -43,7 +43,8 @@ async function refreshToken() {
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
     const accessToken = Cookies.get("access");
-    const csrfToken = Cookies.get("csrftoken");
+    const csrfToken =
+      Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken"); // Try both common names for CSRF token
 
     if (csrfToken) {
       request.headers.set("X-CSRFToken", csrfToken);

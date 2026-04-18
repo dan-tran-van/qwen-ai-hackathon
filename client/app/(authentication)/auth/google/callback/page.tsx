@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 export default function GoogleCallbackPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const { data, isLoading, error } = $api.useQuery(
@@ -23,10 +23,10 @@ export default function GoogleCallbackPage() {
     },
   );
   useEffect(() => {
-    if (user || data) {
+    if (data) {
       redirect("/");
     }
-  }, [user, data]);
+  }, [data]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.detail}</div>;

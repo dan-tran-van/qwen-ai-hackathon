@@ -349,8 +349,11 @@ REST_AUTH = {
     "JWT_AUTH_COOKIE": "access",
     "JWT_AUTH_REFRESH_COOKIE": "refresh",
     "JWT_AUTH_HTTPONLY": True,
-    "JWT_AUTH_SECURE": False,  # True in production!
-    "JWT_AUTH_SAMESITE": "Lax",
+    "JWT_AUTH_SECURE": env.bool(
+        "JWT_AUTH_SECURE",
+        default=False,
+    ),  # True in production!
+    "JWT_AUTH_SAMESITE": "None",
     "JWT_AUTH_RETURN_EXPIRATION": True,
     "JWT_AUTH_COOKIE_USE_CSRF": True,
 }

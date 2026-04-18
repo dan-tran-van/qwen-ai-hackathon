@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-// 1. Specify protected and public routes
 const protectedRoutes = [
   "/",
   "/overview",
@@ -12,28 +10,20 @@ const protectedRoutes = [
   "/analytics",
   "/security",
 ];
+
 const publicRoutes = ["/login", "/signup", "/auth/google/callback"];
 
 export default async function proxy(req: NextRequest) {
-  // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
+  let access = req.cookies.get("access")?.value;
+  const refresh = req.cookies.get("refresh")?.value;
 
-  // 3. Get the access token from cookies
-  const access = (await cookies()).get("access")?.value;
-  const refresh = (await cookies()).get("refresh")?.value;
-  console.log("Access token:", access);
-  console.log("Refresh token:", refresh);
+  const response = NextResponse.next();
 
   if (!access && refresh) {
-    console.log(
-      "No access token, but refresh token exists. Attempting to refresh...",
-    );
     try {
       const refreshResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}api/auth/token/refresh/`,
@@ -43,84 +33,60 @@ export default async function proxy(req: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ refresh }),
+          cache: "no-store",
         },
       );
-      const responesJson = await refreshResponse.json();
+
       if (refreshResponse.ok) {
-        const newAccess = responesJson.access;
-        console.log("New access token:", newAccess);
-        (await cookies()).set("access", newAccess, {
+        const refreshJson: { access: string } = await refreshResponse.json();
+        access = refreshJson.access;
+
+        response.cookies.set("access", access, {
+          httpOnly: true,
           secure: true,
+          sameSite: "none",
+          path: "/",
         });
       } else {
-        (await cookies()).delete("access");
-        // (await cookies()).delete("refresh");
-        console.log(refresh);
+        response.cookies.delete("access");
       }
-    } catch (error) {
-      console.error("Failed to refresh token:", error);
-      (await cookies()).delete("access");
-      // (await cookies()).delete("refresh");
-      console.log(refresh);
+    } catch {
+      response.cookies.delete("access");
     }
   }
-  const isLoggedIn = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}api/auth/user/`,
-    {
-      headers: {
-        Authorization: `Bearer ${access}`,
-      },
-      credentials: "include",
-    },
-  )
-    .then((res) => res.ok)
-    .catch(async () => {
-      // try {
-      //   const refreshResponse = await fetch(
-      //     `${process.env.NEXT_PUBLIC_API_BASE_URL}api/auth/token/refresh/`,
-      //     {
-      //       method: "POST",
-      //       credentials: "include",
-      //     },
-      //   );
-      //   if (refreshResponse.ok) {
-      //     const newAccess = (await refreshResponse.json()).access;
-      //     console.log("New access token:", newAccess);
-      //     (await cookies()).set(
-      //       "access",
-      //       (await refreshResponse.json()).access,
-      //       {
-      //         secure: true,
-      //       },
-      //     );
-      //     return true;
-      //   }
-      // } catch (error) {
-      //   console.error("Failed to refresh token:", error);
-      // }
-      return false;
-    });
 
-  console.log("Is logged in:", isLoggedIn);
+  let isLoggedIn = false;
 
-  // 4. Redirect to /login if the user is not authenticated
+  if (access) {
+    try {
+      const userResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}api/auth/user/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+          cache: "no-store",
+        },
+      );
+
+      isLoggedIn = userResponse.ok;
+    } catch {
+      isLoggedIn = false;
+    }
+  }
+
   if (isProtectedRoute && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  // 5. Redirect to /dashboard if the user is authenticated
-  if (
-    isPublicRoute &&
-    isLoggedIn &&
-    !req.nextUrl.pathname.startsWith("/overview")
-  ) {
+  if (isPublicRoute && isLoggedIn && path !== "/overview") {
     return NextResponse.redirect(new URL("/overview", req.nextUrl));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
-// Routes Proxy should not run on
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

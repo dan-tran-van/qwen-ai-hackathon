@@ -53,8 +53,8 @@ import {
 } from "@/components/ui/dialog";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { $api } from "@/lib/api/api";
-import { DOCUMENT_TYPE_LABEL } from "../constants";
+import { $api, fetchClient } from "@/lib/api/api";
+import { DOCUMENT_STATUS_LABEL, DOCUMENT_TYPE_LABEL } from "../constants";
 import Link from "next/link";
 
 // Stage-dependent config
@@ -160,6 +160,7 @@ export default function DocumentDetail() {
   const [showPreview, setShowPreview] = useState(false);
   const [showResponsePreview, setShowResponsePreview] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState(false);
+  const [generatedResponseContent, setGeneratedResponseContent] = useState("");
 
   const {
     data: doc,
@@ -186,6 +187,21 @@ export default function DocumentDetail() {
       enabled: !!id,
     },
   );
+  const { data: storedResponse } = $api.useQuery(
+    "get",
+    "/api/documents/{id}/response/",
+    {
+      params: {
+        path: {
+          id: String(id),
+        },
+      },
+    },
+    {
+      enabled: !!id,
+      retry: false,
+    },
+  );
 
   if (isLoading || workflowLoading) {
     return <div>Loading...</div>;
@@ -199,19 +215,69 @@ export default function DocumentDetail() {
     .filter((a) => a.document === doc.code)
     .slice(0, 3);
 
-  const config = stageConfig[doc?.status] || stageConfig["Mới"];
+  const currentStatus = (doc.status ??
+    "NEW") as keyof typeof DOCUMENT_STATUS_LABEL;
+  const currentStage = DOCUMENT_STATUS_LABEL[currentStatus] || "Mới";
+  const config = stageConfig[currentStage] || stageConfig["Mới"];
 
   const handleAskAI = () => {
     if (!doc) return;
     navigate(`/ai-chat?source=workflow&docId=${doc.id}`);
   };
 
-  const handleGenerateResponse = () => {
+  const handleGenerateResponse = async () => {
+    if (!doc) return;
+
     setGeneratingResponse(true);
-    setTimeout(() => {
-      setGeneratingResponse(false);
+    try {
+      const { data, error } = await fetchClient.POST(
+        "/api/documents/{id}/generate_response/",
+        {
+          params: {
+            path: {
+              id: String(doc.id),
+            },
+          },
+        },
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      const responseContent =
+        typeof data === "string"
+          ? data
+          : data && typeof data === "object" && "content" in data
+            ? String((data as { content?: unknown }).content ?? "")
+            : "";
+
+      setGeneratedResponseContent(
+        responseContent || "Chưa có nội dung phản hồi được trả về từ máy chủ.",
+      );
       setShowResponsePreview(true);
-    }, 2000);
+    } catch (err) {
+      toast("Không thể tạo phản hồi AI", {
+        description:
+          err instanceof Error ? err.message : "Vui lòng thử lại sau.",
+      });
+    } finally {
+      setGeneratingResponse(false);
+    }
+  };
+
+  const handleViewResponse = () => {
+    const responseContent =
+      typeof storedResponse === "object" &&
+      storedResponse &&
+      "content" in storedResponse
+        ? String((storedResponse as { content?: unknown }).content ?? "")
+        : "";
+
+    setGeneratedResponseContent(
+      responseContent || "Chưa có nội dung phản hồi được lưu.",
+    );
+    setShowResponsePreview(true);
   };
 
   return (
@@ -609,12 +675,35 @@ export default function DocumentDetail() {
               )}
               {config.actions.includes("view-response") && (
                 <button
-                  onClick={() => setShowResponsePreview(true)}
+                  onClick={handleViewResponse}
                   className="h-9 px-4 rounded-lg border border-border/60 bg-card text-sm font-medium text-foreground flex items-center gap-2 hover:bg-muted transition-colors"
                 >
                   <Eye className="h-3.5 w-3.5" /> Xem phản hồi
                 </button>
               )}
+              {storedResponse && !config.actions.includes("view-response") && (
+                <button
+                  onClick={handleViewResponse}
+                  className="h-9 px-4 rounded-lg border border-primary/30 bg-primary/5 text-sm font-medium text-primary flex items-center gap-2 hover:bg-primary/10 transition-colors"
+                >
+                  <Eye className="h-3.5 w-3.5" /> Xem phản hồi AI
+                </button>
+              )}
+              {!config.actions.includes("generate-response") &&
+                doc.status !== "COMPLETED" && (
+                  <button
+                    onClick={handleGenerateResponse}
+                    disabled={generatingResponse}
+                    className="h-9 px-4 rounded-lg border border-primary/30 bg-primary/5 text-sm font-medium text-primary flex items-center gap-2 hover:bg-primary/10 transition-colors disabled:opacity-60"
+                  >
+                    {generatingResponse ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3.5 w-3.5" />
+                    )}
+                    {generatingResponse ? "Đang tạo..." : "Tạo phản hồi AI"}
+                  </button>
+                )}
               {config.actions.includes("ask-ai") && (
                 <button
                   onClick={handleAskAI}
@@ -875,31 +964,8 @@ export default function DocumentDetail() {
               <Sparkles className="h-4 w-4 text-primary" /> Phản hồi AI
             </DialogTitle>
           </DialogHeader>
-          <div className="bg-muted/30 rounded-lg p-4 text-sm text-foreground leading-relaxed space-y-3">
-            <p>
-              <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong>
-            </p>
-            <p>Kính gửi: {doc.sender}</p>
-            <p>
-              V/v: Phản hồi {doc.code} – {doc.title}
-            </p>
-            <p>
-              Căn cứ nội dung văn bản {doc.code} ngày {doc.received_date}, sau
-              khi xem xét, chúng tôi có ý kiến như sau:
-            </p>
-            <p>
-              1. Nội dung đề nghị đã được tiếp nhận và xử lý theo đúng quy
-              trình.
-            </p>
-            <p>
-              2. Đề xuất: Phê duyệt theo phương án do phòng {doc.suggested_dept}{" "}
-              trình bày.
-            </p>
-            <p className="text-right mt-4 font-medium">
-              Trưởng phòng
-              <br />
-              {doc?.suggested_reviewer}
-            </p>
+          <div className="bg-muted/30 rounded-lg p-4 text-sm text-foreground leading-relaxed whitespace-pre-line">
+            {generatedResponseContent}
           </div>
           <DialogFooter className="gap-2">
             <button

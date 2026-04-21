@@ -172,3 +172,19 @@ class WorkflowDocumentResponseGenerationView(generics.GenericAPIView):
         )
         serializer = WorkflowDocumentAIDraftResponseSerializer(new_ai_draft_response)
         return Response(serializer.data)
+
+
+class WorkflowDocumentResponseView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        responses=WorkflowDocumentAIDraftResponseSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        id = self.kwargs.get("pk")
+        workflow_document = WorkflowDocument.objects.get(id=id)
+        ai_draft_response = WorkflowDocumentAIDraftResponse.objects.get(
+            document=workflow_document
+        )
+        serializer = WorkflowDocumentAIDraftResponseSerializer(ai_draft_response)
+        return Response(serializer.data)

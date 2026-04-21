@@ -659,6 +659,29 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/documents/{id}/response/:
+    get:
+      operationId: documents_response_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - documents
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDocumentAIDraftResponse'
+          description: ''
   /api/documents/{id}/update/:
     put:
       operationId: documents_update_update
@@ -2531,6 +2554,31 @@ components:
       required:
       - attachments
       - created
+      - id
+      - modified
+    WorkflowDocumentAIDraftResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        content:
+          type: string
+        document:
+          type: string
+          format: uuid
+      required:
+      - created
+      - document
       - id
       - modified
     WorkflowDocumentAttachment:

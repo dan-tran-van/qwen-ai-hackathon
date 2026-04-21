@@ -13,17 +13,40 @@ export const fetchClient = createFetchClient<paths>({
 });
 
 const AUTH_EXCLUDED_PATHS = new Set([
-  "/api/accounts/token/refresh/",
-  "/api/accounts/login/",
+  "/api/auth/token/refresh/",
+  "/api/auth/login/",
 ]);
 
-console.log(Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken")); // Log the CSRF token for debugging
+const CSRF_COOKIE_NAMES = ["__Secure-csrftoken", "csrftoken"];
+const CSRF_TOKEN_PATTERN = /^[A-Za-z0-9]{32,64}$/;
+
+export function getCsrfToken() {
+  for (const cookieName of CSRF_COOKIE_NAMES) {
+    const token = Cookies.get(cookieName);
+    if (token && CSRF_TOKEN_PATTERN.test(token)) {
+      return token;
+    }
+  }
+
+  return undefined;
+}
+
+export function createCsrfHeaders() {
+  const csrfToken = getCsrfToken();
+  const headers: Record<string, string> = {};
+  if (csrfToken) {
+    headers["X-CSRFToken"] = csrfToken;
+  }
+
+  return headers;
+}
 
 async function refreshToken() {
   try {
     const response = await fetch(`${API_BASE_URL}api/auth/token/refresh/`, {
       method: "POST",
       credentials: "include", // Include cookies in the refresh request
+      headers: createCsrfHeaders(),
     });
 
     if (response.ok) {
@@ -43,8 +66,7 @@ async function refreshToken() {
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
     const accessToken = Cookies.get("access");
-    const csrfToken =
-      Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken"); // Try both common names for CSRF token
+    const csrfToken = getCsrfToken();
 
     if (csrfToken) {
       request.headers.set("X-CSRFToken", csrfToken);

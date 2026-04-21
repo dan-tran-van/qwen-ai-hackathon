@@ -1,6 +1,6 @@
 "use client";
 
-import { $api } from "@/lib/api/api";
+import { $api, createCsrfHeaders } from "@/lib/api/api";
 import { useAuth } from "@/providers/auth-provider";
 import { components } from "@/lib/api/v1";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,7 +20,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import GoogleLoginButton from "../../components/google-login-button";
-import Cookies from "js-cookie";
 
 type LoginRequest = components["schemas"]["Login"];
 
@@ -91,10 +90,7 @@ export default function LoginPage() {
 
     await loginMutation.mutateAsync({
       body: payload,
-      headers: {
-        "X-CSRFToken":
-          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
-      },
+      headers: createCsrfHeaders(),
     });
   });
 

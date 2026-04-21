@@ -1,9 +1,8 @@
 "use client";
-import { $api } from "@/lib/api/api";
+import { $api, createCsrfHeaders } from "@/lib/api/api";
 import { useAuth } from "@/providers/auth-provider";
 import { redirect, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import Cookies from "js-cookie";
 
 export default function GoogleCallbackPage() {
   // const { user } = useAuth();
@@ -14,10 +13,7 @@ export default function GoogleCallbackPage() {
     "/api/auth/google/",
     {
       body: { code: code || "" },
-      headers: {
-        "X-CSRFToken":
-          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
-      },
+      headers: createCsrfHeaders(),
     },
     {
       enabled: !!code, // Only run if we have a code and no user is logged in

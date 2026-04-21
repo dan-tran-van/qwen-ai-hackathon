@@ -1,9 +1,8 @@
 "use client";
-import { $api, fetchClient } from "@/lib/api/api";
+import { $api, createCsrfHeaders, fetchClient } from "@/lib/api/api";
 import { components } from "@/lib/api/v1";
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 type UserDetails = components["schemas"]["UserDetails"];
@@ -29,10 +28,7 @@ export default function AuthProvider({
 
   const logout = async () => {
     await fetchClient.POST("/api/auth/logout/", {
-      headers: {
-        "X-CSRFToken":
-          Cookies.get("csrftoken") || Cookies.get("__Secure-csrftoken") || "",
-      },
+      headers: createCsrfHeaders(),
     });
 
     queryClient.invalidateQueries();
